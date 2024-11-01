@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # Script: arc_check_ms.pl
-# By: jeckhardt
+# By: jvossler
 # Dated: 
 # Purpose: tool to identify problems with client mail sources
 
