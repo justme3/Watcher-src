@@ -5,7 +5,7 @@
 # Dated: 
 # Purpose: tool to identify problems with client mail sources
 
-our $author		= 'jeckhardt';
+our $author		= 'jvossler';
 our $author_email	= 'John_Vossler\@McAfee.com';
 our $last_update	= '01-24-2009';
 our $script_name	= 'arc_check_ms.pl';
