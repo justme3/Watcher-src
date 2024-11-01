@@ -1,0 +1,868 @@
+
+# Check for the command line time override and process.
+if($override_time) {
+
+	my $msg = "An override time of $override_time, has been sumbitted.";
+	logwrite(MXL_INFO, $msg);
+
+	if(($debug_flag) || ($verbose_flag))
+	{ print "$msg\n"; }
+
+	@ymdhms = validate_override_time($override_time);
+
+	$msg = "The override time has been accepted. This run is now for @ymdhms\n";
+	logwrite(MXL_INFO, $msg);
+
+	if(($debug_flag) || ($verbose_flag))
+	{ print "$msg\n"; }
+
+} else {
+
+	@ymdhms = day_before(@ymdhms);
+	@ymdhms = ($ymdhms[0], $ymdhms[1], $ymdhms[2], 9, 0, 0);
+
+	my $msg =	"Override time was _not_ specified, so the effective time will be 9AM".
+			" yesterday: ".sprintf("%04d/%02d/%02d %02d:%02d:%02d",@ymdhms). "\n";
+
+	if(($debug_flag) || ($verbose_flag))
+	{ print "$msg\n"; }
+	logwrite(MXL_INFO, $msg);
+}
+
+# Reset the smhdmy and utime now that @ymdhms is officially established.
+$utime=timelocal(rev_array(ymdhms_human2unix(@ymdhms)));
+@smhdmy = rev_array(@ymdhms);
+
+my $msg =	"$script_name has established it's effective run time: ".
+		sprintf("%04d/%02d/%02d %02d:%02d:%02d", @ymdhms)."\n".
+		"The equivalent Unix time is, $utime\n";
+		"Verify that ".(strftime "%a %b %e %H:%M:%S %Y", localtime($utime)).
+		" is equivalent as well\n";
+
+logwrite(MXL_INFO, $msg);
+if(($debug_flag) || ($verbose_flag)) {
+	print $msg;
+}
+
+
+%arch_data = &get_arch_data();
+%wds_data = &get_wds_data();
+
+# Write the resulting data to the daily data file.
+&write_daily_data(\@results, \%arch_data, \%wds_data); 
+
+# Write the resulting data to the monthly data file.
+&write_monthly_data(\@results, \%arch_data, \%wds_data); 
+
+# Send daily email reports.
+if($email_flag) {
+	&email_daily_results(\@results, \@daily_email, \%arch_data, \%wds_data);
+}
+
+if(($debug_flag) || ($verbose_flag)) {
+	print "\n",&summarize_data(\@results, \%arch_data, \%wds_data),"\n";
+	logwrite(MXL_INFO,	"The following were this run\'s results:\n\n".
+				&summarize_data(\@results, \%arch_data, \%wds_data)."\n");
+}
+
+logwrite(MXL_INFO,"$script_name is finished. Closing.");
+close LOGFILE;
+
+### End MAIN processing. 
+################################################################################################
+### Subroutines
+
+# Subroutine:	day_before
+# Args:		@ymdhms(array)
+# Return Value:	@ymdhms(array)
+# Purpose:	Given a ymdhms array, return the same for one day before. 
+sub day_before(@)
+{
+	my $subroutine_name = 'day_before';
+	my ($year, $month, $day, $hour, $minute, $second) = @_;
+
+	my @temp = ($year, $month, $day, $hour, $minute, $second);
+	my @pmet = ();
+
+	foreach my $entry (@ymdhms) {
+                push @pmet, pop @temp;
+        }
+	$pmet[4] = $pmet[4]-1;
+
+	my $time = timelocal(@pmet);
+	my $yesterday = $time - DAY_SEC;
+
+	my @new_ltime = localtime($yesterday);
+	my @return_array = (	$new_ltime[5]+1900,$new_ltime[4]+1,$new_ltime[3],
+				$new_ltime[2],$new_ltime[1],$new_ltime[0]);
+
+	return @return_array;
+}
+
+# Subroutine:	email_daily_results
+# Args:		@data (array), @recipients (array)
+# Return Value:	<void>
+# Purpose:	Email recipients with the daily summary of Metrics. 
+sub email_daily_results(@@%%)
+{
+
+	my $subroutine_name = 'email_daily_results';
+
+	if($debug_flag)
+	{ print "DEBUG: Entering $subroutine_name.\n"; }
+	elsif($verbose_flag)
+	{ print "Emailing daily metrics to the recipient list.\n"; }
+	else
+	{ ; }
+
+	my ($ref1, $ref2, $ref3, $ref4)	= @_;
+
+	my @data	= @$ref1;
+	my @recipients	= @$ref2;
+	my %arch_data	= %$ref3;
+	my %wds_data	= %$ref4;
+
+	my $smtp = Net::SMTP->new("127.0.0.1", Port=>"25")
+			|| logwrite(MXL_FATAL,"Subroutine: email_daily_results: could not initiate the smtp session.");
+
+	my $attach = get_monthly_data($ymdhms[0], $ymdhms[1]);
+
+	my $content = 
+                "From: Metrics <metrics\@mcafee.com>\n" .
+                "To: Unspecifcied Recipients <john_vossler\@mcafee.com>\n" .
+                "Subject: Metrics: Daily Output: ".sprintf("%04d-%02d-%02d", @ymdhms).": Denver Pod ".$pod."\n" .
+                "MIME-Version: 1.0\n" .
+                "Content-Transfer-Encoding: 7bit\n" .
+		"Content-Type: multipart/mixed;\n" .
+                "\tboundary=\"____BOUNDARY____\"\n" .
+                "\n" .
+                "This is a multi-part message in MIME format.\n" .
+                "\n" .
+                "--____BOUNDARY____\n" .
+                "Content-Type: text/plain; charset=\"iso-8859-1\"\n" .
+                "\n" .
+		&summarize_data(\@data, \%arch_data, \%wds_data).
+		"\n".$warnings."\n".
+                "\n\nMonthly summary data attached.\n" .
+                "--____BOUNDARY____\n" .
+                "Content-Type: text/plain;\n" .
+                "\tName=\"".sprintf("%04d-%02.csv",@ymdhms)."\"\n" .
+                "Content-Transfer-Encoding: base64\n" .
+                "Content-Disposition: attachment;\n" .
+                "\tfilename=\"".sprintf("%04d-%02d.csv",@ymdhms)."\"\n" .
+                "\n" .
+                encode_base64($attach) . "\n" .
+                "--____BOUNDARY____\n";
+
+	if($debug_flag){
+		print "\tSubroutine: email_daily_results: I am about to email :\n";
+		foreach my $recipient (@recipients) {
+			print "\t\t$recipient\n";
+		}
+		if($debug_flag > 1)
+		{ print "\tWith the following content:\n$content\n"; }
+	}
+	foreach my $recipient (@recipients) {
+		logwrite(MXL_INFO, "A daily report was emailed to $recipient.");
+	}
+
+	$smtp->mail("metrics\@mcafee.com")
+		or logwrite(MXL_FATAL, "Subroutine: email_daily_results: SMTP from address rejected.\n".$smtp->code."\n".$smtp->message);
+	$smtp->recipient(@recipients, { Notify => ['NEVER'], SkipBad => 1 })
+		or logwrite(MXL_FATAL, "Subroutine: email_daily_results: SMTP recipients rejected\n".$smtp->code."\n".$smtp->message);
+	$smtp->data()
+		or logwrite(MXL_FATAL, "Subroutine: email_daily_results: SMTP host denied data.\n".$smtp->code."\n".$smtp->message);
+	$smtp->datasend($content) 
+		or logwrite(MXL_FATAL, "Subroutine: email_daily_results: SMTP did not accept the content.\n".$smtp->code."\n".$smtp->message);
+	$smtp->dataend()
+		or logwrite(MXL_FATAL, "Subroutine: email_daily_results: SMTP rejected message.\n".$smtp->code."\n".$smtp->message);
+        $smtp->quit()
+		or logwrite(MXL_FATAL, "Subroutine: email_daily_results: SMTP did not end properly.\n".$smtp->code."\n".$smtp->message);
+}
+
+# Subroutine:   get_arch_data
+# Args		none
+# Return Value: %arch_data (hash)
+# Purpose:      Responsible for collecting WDS data and returning it in a hash structure.
+sub get_arch_data()
+{
+#	my($arch_num_cust, $arch_num_seats)                                             = (0,0);
+#	my($arch_mesgs_ingested, $arch_msgs_backloged)                                  = (0,0);
+#	my($arch_data393_store_size, $arch_level3_store_size)                           = (0,0);
+#	my($arch_data393_index_size, $arch_level3_index_size)                           = (0,0);
+#	my($arch_data393_index_searches, $arch_level3_index_searches)                   = (0,0);
+
+	my %data = (
+		num_cust => '-1',
+		num_seats => '-1',
+		msgs_ingested => '-1',
+		msgs_backlogged => '-1',
+		data393_store_size => '-1',
+		level3_store_size => -1,
+		data393_index_size => -1,
+		level3_index_size => -1,
+		data393_searches => -1,
+		level3_searches => -1,
+	);
+	my $line = '';
+	my $log_file = '';
+	my @parts = {};
+
+	# Count Archiving Customers.
+	my @cids = Arch::cids_from_mail_source();
+	$data{'num_cust'} = $#cids;
+	
+	#Count Archiving Seats.
+	my $seat_count = 0;
+
+	foreach my $cid (@cids) {
+		my $seats =  int(MXL::customer_seats_from_cid($cid));
+		$seat_count = $seat_count + $seats;
+	}
+
+	$data{'num_seats'} = $seat_count;
+
+	# Count Messages Archived.
+	my $ingest_count = 0;
+
+	foreach my $cid (@cids) {
+		my $count = int(`/usr/local/bin/opsadmin/arc_cust_vel.pl --cid $cid`);
+		#print "Count: $count\n";
+		$ingest_count = $ingest_count + $count;
+	}
+
+	$data{'msgs_ingested'} = $ingest_count;
+	
+	# Count Messages Backlogged.
+	$data{'msgs_backlogged'} = `sqlite3 /tmp/arc.cust.data.db 'select sum(count) from backlog ;'`;
+	
+	# Get Data393 Store Size
+	$line = `ssh 10.$pod.106.54 'df /mxl/msg_archive/mas/mnt/data393 -P' | tail -1`;
+	@parts = split(/\s+/, $line);
+	$data{'data393_store_size'} = $parts[2];
+
+	# Get Level3 Store Size
+	$line = `ssh 10.$pod.106.54 'df /mxl/msg_archive/mas/mnt/level3 -P' | tail -1`;
+	@parts = split(/\s+/, $line);
+	$data{'level3_store_size'} = $parts[2];
+
+	# Get Data393 Index Size
+	$line = `ssh 10.$pod.106.137 'df /var/msg_archive -P | tail -1'`;
+	@parts = split(/\s+/, $line);
+	$data{'data393_index_size'} = $parts[2];
+
+	# Get Level3 Index Size
+	$line = `ssh 10.$pod.107.137 'df /var/msg_archive -P | tail -1'`;
+	@parts = split(/\s+/, $line);
+	$data{'level3_index_size'} = $parts[2];
+
+	# Get Data393 Index Searches
+	$log_file = sprintf('/mxl/var/jetty/logs/%04d_%02d_%02d.request.log', $ymdhms[0], $ymdhms[1], $ymdhms[2]);
+	$line = `ssh 10.$pod.106.137 'wc -l $log_file'`;
+	@parts = split(/\s+/, $line);
+	$data{'data393_searches'} = $parts[0];
+
+	# Get Level3 Index Searches
+	$log_file = sprintf('/mxl/var/jetty/logs/%04d_%02d_%02d.request.log', $ymdhms[0], $ymdhms[1], $ymdhms[2]);
+	$line = `ssh 10.$pod.107.137 'wc -l $log_file'`;
+	@parts = split(/\s+/, $line);
+	$data{'level3_searches'} = $parts[0];
+
+	if($debug_flag){ print Dumper(%data); }
+	
+	return %data;
+
+}
+
+
+# Subroutine:	logwrite
+# Args:		$type(scalar), $string (scalar)
+# Return Value:	<void>
+# Purpose:	Given a string, write it to the logfile. If the type is FATAL, kill the script and dump the last error.
+sub logwrite($$)
+{
+        my $type = shift;
+        my $msg = shift;
+
+        my @time = localtime(time());
+        my ($sec,$min,$hour,$mday,$mon,$year,$wday) = @time;
+        my $tstamp = sprintf "%02d/%02d/%04d %02d.%02d.%02d", $mon+1, $mday, $year+1900, $hour, $min, $sec;
+
+        print LOGFILE ("$tstamp: $hshLogTypes{$type}: $msg\n");
+
+        if ($type == MXL_FATAL) 
+	{ die "$msg\n$!\nCheck the log.\n"; }
+}
+
+
+# Subroutine:   rev_array
+# Args:         $array (array)
+# Return Value: $array (array)
+# Purpose:      Given a array, return an array with elements in reverse order.
+sub rev_array(@)
+{
+        my @one = @_;
+        my $length = @one;
+        my @two = ();
+        for (my $ii=$length-1;$ii>=0;$ii--)
+        { push @two, $one[$ii] }
+        return @two;
+}
+
+
+# Subroutine:	sci_to_int
+# Args:		$num (scalar)
+# Return Value:	$string (scalar)
+# Purpose:	Given a number in scientific notion, return the equivalent float. 
+sub sci_to_int($)
+{
+	my($num) = @_;
+	my $subroutine_name = 'sci_to_int';
+
+	my @parts = split(/e/, $num);
+	my $return_value = $parts[0];
+
+	if(substr($parts[1],0,1) eq '-') {
+		for(my $ii=0; $ii<$parts[1]; $ii++)
+		{ $return_value = $return_value/10; }
+	} else {
+		for(my $ii=0; $ii<$parts[1]; $ii++)
+		{ $return_value = $return_value*10; }
+	}
+	return $return_value;
+}
+
+# Subroutine:	summarized_data
+# Args:		@data (array)
+# Return Value:	$string (scalar)
+# Purpose:	Given the data array, return a human-readable version of the daily metrics. 
+sub summarize_data(@%%)
+{
+	my $subroutine_name = 'summarize_data';
+
+	if($debug_flag)
+	{ print "DEBUG: Entering $subroutine_name.\n"; }
+
+	my ($ref1, $ref2, $ref3) = @_;
+	my @data = @$ref1;
+	my %arch_data = %$ref2;
+	my %wds_data = %$ref3;
+
+	my $expected_data_points = 17;
+
+	if((my $length = @data) != $expected_data_points)
+	{ logwrite(MXL_FATAL, "Subroutine: $subroutine_name: There are not enough data points to summarize ($length of $expected_data_points)."); } 
+
+	if ($debug_flag > 1) {
+		print "\tSubroutine: summarized_data: Displaying individual data points.\n";
+		foreach my $datum (@data)
+		{ print "\t\tDatum: $datum\n"; }
+	}
+
+	my $string =	
+			"Level 3 In-Bound MTA Load:         $data[0]%\n".
+			"Level 3 Out-Bound MTA Load:        $data[1]%\n".
+			"Level 3 In-Bound MTAs:             $data[2]\n".
+			"Data 393 In-Bound MTA Load:        $data[3]%\n".
+			"Data 393 Out-Bound MTA Load:       $data[4]%\n".
+			"Data 393 In-Bound MTAs:            $data[5]\n".
+			"Total In-Bound MTA Load:           $data[6]%\n".
+			"Total Out-Bound MTA Load:          $data[7]%\n".
+			"Total Inbound Messages:            $data[8]\n".
+			"Total Quarantine Messages:         $data[9]\n".
+			"Total Outbound Traffic:            $data[10]\n".
+#			"Quarantine DB Size                 $data[11]\n".
+			"SQR Reports Generated              $data[12]\n".
+			"SQR Reports Finished               $data[13]\n".
+#			"DB Maintenance Finished            $data[14]\n". 
+			"WDS CPL Length (lines)             $data[15]\n". 
+			"WDS CPL Size (bytes)               $data[16]\n". 
+			"";
+
+	$string .=	"\n";
+
+	foreach my $db (sort(keys %dbs)) {
+		$string .=	summarize_db_stats($db);
+	}
+
+	$string .=	
+			"\n---- Archiving Data ---- \n\n".
+			"Number of Customers:               $arch_data{'num_cust'}\n".
+			"Number of Seats:                   $arch_data{'num_seats'}\n".
+			"Number of Messages Ingested:       $arch_data{'msgs_ingested'}\n".
+			"Number of Messages Backlogged:     $arch_data{'msgs_backlogged'}\n".
+			"Data 393 Store Size (b):           $arch_data{'data393_store_size'}\n".
+			"Level 3 Store Size (b):            $arch_data{'level3_store_size'}\n".
+			"Data 393 Index Size (b):           $arch_data{'data393_index_size'}\n".
+			"Level 3 Index Size (b):            $arch_data{'level3_index_size'}\n".
+			"Data 393 Searches:                 $arch_data{'data393_searches'}\n".
+			"Level 3 Searches:                  $arch_data{'level3_searches'}\n".
+			"";
+	
+	$string .=	
+			"\n---- WDS Data ---- \n\n".
+			"Minumum Latency:                   $wds_data{'min_latency'}\n".
+			"Maximum Latency:                   $wds_data{'max_latency'}\n".
+			"Average Latency:                   $wds_data{'avg_latency'}\n".
+			"Average Peak Latency:              $wds_data{'avg_peak_latency'}\n".
+			"Requests Allowed:                  $wds_data{'reqs_allowed'}\n".
+			"Requests Blocked:                  $wds_data{'reqs_blocked'}\n".
+			"Viruses Blocked:                   $wds_data{'viruses'}\n".
+			"Bandwidth In (kb):                 $wds_data{'bw_in'}\n".
+			"Bandwidth Out (kb):                $wds_data{'bw_out'}\n".
+			"";
+
+	return $string;
+}
+
+	my $found = 0;
+
+	open(DB_STATS, "<$db_stats_log");
+	my @lines = <DB_STATS>;
+	close DB_STATS;
+
+	foreach my $line (@lines) {
+		if(($line =~ $db) && ($line =~ $date_str)) {
+			if($debug_flag) {
+				print "Subroutine: $subroutine_name - Found line in $db_stats_log for $db on $date_str.\n";
+				print "Subroutine: $subroutine_name - $line\n";
+			}	
+			$found = 1;
+			@data = split(/,/,$line,$expected_data_points);
+		}
+	}
+
+	#if((my $length = @data) != $expected_data_points)
+	#{ logwrite(MXL_FATAL, "Subroutine: $subroutine_name: There are not enough data points to summarize."); } 
+
+	if ($debug_flag > 1) {
+		print "\tSubroutine: summarized_data: Displaying individual data points.\n";
+		foreach my $datum (@data)
+		{ print "\t\tDatum: $datum\n"; }
+	}
+
+	my $string = '';
+	unless($found) {
+		$string = "No summary data for $dbs{$db} on $db\n";
+		return $string;
+	}
+
+	unless(($data[0] eq $date_str) && ($data[2] eq $db) && ($data[1] eq $dbs{$db})) {
+		logwrite(MXL_FATAL, "Subroutine: $subroutine_name: Data from file $db_stats_log does not match what is expected.\n");
+	}
+
+	$string =	
+			"Database IP:                       $data[2]\n".
+			"Database Name:                     $data[1]\n".
+			"Disk Utilization:                  $data[3]\n".
+			"Maintenance Start:                 $data[4]\n".
+			"Maintenance End:                   $data[5]\n".
+			"Maintenance Time:                  $data[6]\n".
+			"Connections:                       $data[7]\n".
+			"Load Average:                      $data[8]\n".
+			"Raid Utilization:                  $data[9]\n".
+			"Free Memory:                       $data[10]\n".
+			"24-hour Load Average:              $data[11]\n";
+	return $string;
+}
+
+# Subroutine:	usage
+# Args:		<void>
+# Return Value:	<void>
+# Purpose:	Write the appropriate usage of metrics.pl to STDOUT. 
+sub usage()
+{
+	if($debug_flag)
+	{ print "DEBUG: Entering usage.\n"; }
+
+	open(README, "<README.txt");
+	my @lines = <README>;
+	close README;
+
+	foreach my $line (@lines)
+	{ print $line; }
+}
+
+# Subroutine:	validate_override_time
+# Args:		$override_time (scalar)
+# Return Value:	@ymdhms (array)
+# Purpose:	Given an override time string, validate it and return a representative @ymdhms array.
+sub validate_override_time($)
+{
+	# This subroutine still needs error checking.
+	my $subroutine_name = 'validate_override_time';
+
+        if($debug_flag)
+        { print "DEBUG: Entering $subroutine_name.\n"; }
+
+	my ($time_string) = @_;
+
+	my $length = length($time_string);
+
+        if($debug_flag)
+        { print "DEBUG: time_string = $time_string \n"; }
+
+        if($debug_flag)
+        { print "DEBUG: length = $length \n"; }
+
+	my @date = (0,0,0,9,0,0);
+
+	if($length >= 8) {
+		$date[0] = substr($time_string,0,4);		
+		$date[1] = substr($time_string,4,2);		
+		$date[2] = substr($time_string,6,2);		
+	}
+	if($length >= 10) 
+	{ $date[3] = substr($time_string,8,2); }
+	if($length >= 12) 
+	{ $date[4] = substr($time_string,10,2); }
+	if($length >= 14) 
+
+	{ $date[5] = substr($time_string,14,2); }
+
+        if($debug_flag)
+        { print "\tSubroutine: $subroutine_name: New date is @date\n"; }
+
+	return @date;
+}
+
+# Subroutine:	ymdhms_human2unix
+# Args:		@time (array)
+# Return Value:	@time (array)
+# Purpose:	Given the human-readable date/time array, return the representative unix array. 
+sub ymdhms_human2unix(@)
+{
+	my $subroutine_name = 'ymdhms_human2unix';
+	my @array = @_;
+	my $length = @array;
+	unless($length == 6) {
+		logwrite(MXL_INFO, "$subroutine_name expects an array of length 6");
+	}
+	return ($array[0]-1900,$array[1]-1,$array[2],$array[3],$array[4],$array[5]);
+}
+
+# Subroutine:	ymdhms_unix2human
+# Args:		@time (array)
+# Return Value:	@time (array)
+# Purpose:	Given the date/time array, return the representative human-readable array. 
+sub ymdhms_unix2human(@)
+{
+	my $subroutine_name = 'ymdhms_unix2human';
+	my @array = @_;
+	my $length = @array;
+	unless($length == 6) {
+		 logwrite(MXL_INFO, "$subroutine_name expects an array of length 6"); 
+	}
+	return ($array[0]+1900,$array[1]+1,$array[2],$array[3],$array[4],$array[5]);
+}
+###EOF
+################################################################################################
+
+
+
+
+
+
+
+
+################################################################################################
+################################################################################################
+################################################################################################
+################################################################################################
+################################################################################################
+################################################################################################
+################################################################################################
+################################################################################################
+################################################################################################
+################################################################################################
+
+
+
+#!/usr/bin/perl -w
+
+use strict;
+#use warnings;
+#use diagnostics;
+
+use lib '/usr/local/bin/opsadmin/perl/';
+
+use DBI;
+use Data::Dumper;
+use Getopt::Long qw(:config no_ignore_case bundling);
+use MXL::Arch;
+use MXL::MXL;
+use XML::Simple;
+
+our $AUTHOR     = 'John_Vossler@McAfee.com';
+our $VERSION    = 0.5;
+our $PODCONFIG  = '/mxl/etc/pod_config.xml';
+
+our %flags = ();
+
+#
+# Determine pod.
+#
+my $xs = XML::Simple->new();
+my $config = $xs->XMLin($PODCONFIG) || die "Can't read $PODCONFIG xml file. $!\n";
+my $db_ip = $config->{'pod'}->{'db'}->{'path'};
+my @tmp = split(/\./,$db_ip);
+our $pod = $tmp[1];
+
+my $now=time();              # epoch seconds
+
+sub get_opts();
+
+&get_opts();
+
+if($debug_flag)
+{
+	print Dumper(\%flags);
+}
+
+my %seg_solr_sum = ();
+my %seg_seq_sum = ();
+my %counts = ();
+
+#
+# Create the CID specific hashes
+#
+my %pod = ();
+my %hstcnt = ();
+my %latcnt = ();
+my %cstnam = ();
+my %seqnum = ();
+my %hstndxcnt = ();
+my %latndxcnt = ();
+my %hstseg = ();
+my %latseg = ();
+my %solrej = ();
+my %masrej = ();
+my %mscnt  = ();
+my %usrcnt = ();
+my %msbklg = ();
+my %ndxbklg = ();
+my %segment = ();
+
+#
+# Create the server specific hashes
+#
+my %DNScnt = ();
+my %dircnt = ();
+my %hstsiz = ();
+my %latsiz = ();
+my %diskfree = ();
+
+#
+# Get the list of CIDs from the DB server
+#
+my @cids = Arch::cids_from_mail_source();
+my $cid_counter = 0;
+
+#
+# Get a list of servers
+#
+
+
+#
+# Get all CID specific data
+#	
+	foreach my $cid (@cids) 
+	{
+
+		$cid_counter++;
+
+		if ( $flags{'debug'} ) 
+		{ 
+			if ( $cid_counter > 10 ) 
+			{ 
+				next; 
+			} 
+		}
+
+		if ( `/usr/bin/psql -At -h 10.1.106.130 -U postgres mxl -c "select count(customer_id) from mxl_user where customer_id=$cid"` == 1 )
+		{
+			 $pod($cid) = 1;
+		}
+		else
+		{
+			$pod($cid) = 2;
+		}
+
+		$segment($cid) = `dig +short cid-$cid.search.mas.pod$pod($cid).director.mxlogic.net | tail -n 1 | awk -F\. '{print $4}' | sed s/15//g`;
+		chomp($segment($cid));
+
+		$hstsolrip($cid) = `dig +short cid-$cid.ingest.solr.pod$pod($cid).director.mxlogic.net | tail -n 1 `
+		chomp($hstsolrip($cid));
+
+		$latsolrip($cid) = `dig +short cid-$cid.search.solr.pod$pod($cid).director.mxlogic.net | tail -n 1 `
+		chomp($latsolrip($cid));
+
+		$hstmasip($cid) = `dig +short cid-$cid.ingest.mas.pod$pod($cid).director.mxlogic.net | tail -n 1 `
+		chomp($hstmasip($cid));
+
+		$latmasip($cid) = `dig +short cid-$cid.search.mas.pod$pod($cid).director.mxlogic.net | tail -n 1 `
+		chomp($latmasip($cid));
+
+	
+		$cstnam($cid) = `/usr/bin/psql -At -h 10.$pod($cid).106.130 -U postgres mxl -c "select name from mxl_customer where customer_id=$cid"`;
+		chomp($cstnam($cid));
+
+		$hstcnt($cid) = `/mxl/sbin/solr --solr cid-$cid.writer.solr.pod$pod($cid).director.mxlogic.net --cust=$cid count 2>/dev/null`;
+		chomp($hstcnt($cid));
+		$latcnt($cid) = `/mxl/sbin/solr --solr cid-$cid.reader.solr.pod$pod($cid).director.mxlogic.net --cust=$cid count 2>/dev/null`;
+		chomp($latcnt($cid));
+
+		$seqnum($cid) = `/mxl/sbin/mas -h cid-$cid.search.mas.pod$pod($cid).director.mxlogic.net seq cust=$cid 2>/dev/null`;
+		chomp($seqnum($cid));
+
+		$hstndxcnt($cid) = `/mxl/sbin/arindex-search -i $hstsolrip($cid) -c $cid -q 'index_date:[NOW-1DAYS TO NOW]' -n 1 -f 'return_all'  | grep ^Found | awk '{print $2}'`;
+		chomp($hstndxcnt($cid));
+
+		$latndxcnt($cid) = `/mxl/sbin/arindex-search -i $latsolrip($cid) -c $cid -q 'index_date:[NOW-1DAYS TO NOW]' -n 1 -f 'return_all'  | grep ^Found | awk '{print $2}'`;
+		chomp($latndxcnt($cid));
+
+		$hstseg($cid) = `ssh $hstsolrip($cid) "su - mxl-archive -c '/bin/ls -1 /mxl/msg_archive/solr/data/${CID}/index'" | grep -c "_"`;
+		chomp($hstseq($cid));
+
+		$latseg($cid) = `ssh $latsolrip($cid) "su - mxl-archive -c '/bin/ls -1 /mxl/msg_archive/solr/data/${CID}/index'" | grep -c "_"`;
+		chomp($latseq($cid));
+
+		$solrej($cid) = `ssh $hstmasip($cid) "if [ -d /var/tmp/index_reject/solr-primary/$cid -o -d /var/tmp/index_reject/solr-secondary/$cid ] ; then /usr/bin/find /var/tmp/index_reject/solr-*/$cid  -type f -name 111111* -print | wc -l ; else echo 0;fi"`;
+		chomp($solrej($cid));
+
+		$masrej($cid) = `ssh $hstmasip($cid) "if [ -d /var/tmp/index_reject/mas/$cid ] ; then /usr/bin/find /var/tmp/index_reject/mas/$cid  -type f -name 111111* -print | wc -l ; else echo 0;fi"`
+		chomp($masrej($cid));
+
+		$usrcnt($cid) = `/usr/bin/psql -At -h 10.$pod($cid).106.130 -U postgres mxl -c "select billed_users_qty from arc_product_settings where id=$cid"`;
+		chomp($usrcnt($cid));
+
+		$mscnt($cid) = `/usr/bin/psql -At -h 10.$pod($cid).106.130 -U postgres mxl -c "select count(server_id) from arc_mail_source where id=$cid and active=1"`;
+		chomp($mscnt($cid));
+
+		$msbklg($cid)=0
+		my @msids = `/usr/bin/psql -At -h 10.$pod($cid).106.130 -U postgres mxl -c "select server_id from arc_mail_source where id=$cid and active=1"`;
+
+		foreach my $msid (@msids) 
+		{
+			msblog = 
+
+
+ my $cust_ref = MXL::customer_from_cid($cid);
+      my %customer = %$cust_ref;
+      my @mailers = Arch::sids_from_cid($cid);
+
+      if($flags{'debug'}){ print "Searching customer $customer{'name'}.\n"; }
+
+      foreach my $sid (@mailers) {
+
+         my $ms_ref = Arch::ms_from_sid($sid);
+         my %ms_hash = %$ms_ref;
+         my $unique_host = "$ms_hash{'username'}\@$ms_hash{'server_host'}:$ms_hash{'server_port'}";
+         my $cust_str = "$customer{'name'} ($cid)";
+
+         if($flags{'debug'}){ print "Searching mailsource $unique_host.\n"; }
+
+         my $cmd =   "/usr/local/bin/opsadmin/arc_check_ms.pl -c ".
+               "--host $ms_hash{'server_host'} ".
+               "--user $ms_hash{'username'} ".
+               "--port $ms_hash{'server_port'}";
+
+         my $count = `$cmd`; chomp($count);
+
+
+
+
+$stats{'count'} = $imap->message_count('INBOX');
+
+
+ "/usr/local/bin/opsadmin/arc_check_ms.pl -c ".
+               "--host $ms_hash{'server_host'} ".
+               "--user $ms_hash{'username'} ".
+               "--port $ms_hash{'server_port'}";
+
+
+
+my %msbklg = ();
+
+
+
+
+my %ndxbklg = ();
+
+
+
+
+
+
+		if(($flags{'debug'}) || ($flags{'verbose'}))
+		{
+			print "($cid_counter/$#cids) CID: $cid | SEG: $segment | SEQ: $seq | CNT: $solr_count\n";
+			print "($cid_counter/$#cids) CID: $cid | SEG: $segment | SEQ: $seq \n";
+		}
+	}
+
+#
+# Get all server specific data
+#
+
+
+#
+# Populate the CID table
+#
+
+
+#
+# Populate the server table
+#
+
+print "\n--- Segment Totals ---\n";
+	foreach my $seg (sort keys %seg_solr_sum) {
+		print "SEG: ", $seg, " | TOTAL: ",$seg_solr_sum{$seg},"\n";
+	}
+
+	foreach my $seg (sort keys %counts) {
+#
+		print "\n--- Segment $seg ---\n";
+
+		my %custs = %{$counts{$seg}};
+		foreach my $cust (sort {$custs{$b} <=> $custs{$a} } keys %custs ) {
+	
+			print "CID: ", $cust, " | COUNT: ", $custs{$cust}, "\n"; 
+		}
+	}
+
+##
+## End main  -  Begin subroutines
+##
+
+#
+# Get all command line options into flags hash
+#
+sub get_opts() 
+{
+
+	use Getopt::Long qw(:config no_ignore_case bundling);
+	Getopt::Long::Configure("bundling");
+	GetOptions(
+		'debug|d'       => \$flags{'debug'},
+		'verbose|v'     => \$flags{'verbose'},
+
+		'help|usage|h'  => sub {warn &usage; exit 1;})
+			or die &usage;
+
+	defined($flags{'debug'}) || ($flags{'debug'} = 0);
+	defined($flags{'verbose'}) || ($flags{'verbose'} = 0);
+}
+
+
+
+################################################################################################
+################################################################################################
+################################################################################################
+################################################################################################
+################################################################################################
+################################################################################################
+################################################################################################
+################################################################################################
+################################################################################################
+################################################################################################

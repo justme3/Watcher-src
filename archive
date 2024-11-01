@@ -1,0 +1,899 @@
+#!/usr/bin/perl -w
+
+use strict;
+#use warnings;
+#use diagnostics;
+
+use lib '/usr/local/bin/opsadmin/perl/';
+
+use DBI;
+use Data::Dumper;
+use Getopt::Long qw(:config no_ignore_case bundling);
+use MXL::Arch;
+use MXL::MXL;
+use XML::Simple;
+
+our $AUTHOR     = 'John_Vossler@McAfee.com';
+our $VERSION    = 0.5;
+our $PODCONFIG  = '/mxl/etc/pod_config.xml';
+
+our %flags = ();
+
+$ENV{'PGPASSWORD'} = 'dbG0d';    # Export the postgres password
+
+sub get_opts();
+sub usage();
+sub main();
+
+&get_opts();
+
+if($flags{'debug'})
+{
+	print "flags\n";
+	print Dumper(\%flags);
+}
+
+##
+## Global variables
+##
+my $mypod = ();
+
+##
+## Create variables for CID processing
+##
+#
+# Create the hashes for CIDs
+#
+my %timestamp = ();              # epoch seconds
+my %pod = ();
+my %hstcnt = ();
+my %latcnt = ();
+my %cstnam = ();
+my %hstsolrip = ();
+my %latsolrip = ();
+my %hstmasip = ();
+my %latmasip = ();
+my %hstndxcnt = ();
+my %latndxcnt = ();
+my %hstseg = ();
+my %latseg = ();
+my %solrej = ();
+my %masrej = ();
+my %mscnt  = ();
+my %usrcnt = ();
+my %hstndxbklg = ();
+my %latndxbklg = ();
+my %hstseqnum = ();
+my %latseqnum = ();
+my %segment = ();
+
+#
+# Create hashes for SIDs
+#
+my %ms_timestamp = ();
+my %ms_status = ();
+my %ms_host = ();
+my %ms_user = ();
+my %ms_port = ();
+my %ms_type = ();
+my %ms_name = ();
+my %ms_desc = ();
+my %ms_backlog = ();
+
+#
+# Non hashes
+#
+my $hstndxseqn = ();
+my $latndxseqn = ();
+my $count = ();
+my $results = ();
+my $cid_counter = ();
+my $debug_cid = 20;
+my @cids = ();
+my $ip = ();
+my $ipsolr = ();
+my @solr = ();
+my $indexstr = ();
+my @indexcnt = ();
+my @mailers = ();
+my $ms_ref = ();
+my %ms_hash = ();
+my $cmd = ();
+my $ndxseqstr = ();
+my @ndxseq = ();
+my $insert = ();
+
+#
+# Get the list of CIDs from the DB server
+#
+	@cids = Arch::cids_from_mail_source();
+	$cid_counter = 0;
+
+	if(($flags{'debug'}) && ($flags{'verbose'}))
+	{
+		print "\ncids\n";
+		print Dumper \@cids;
+	}
+
+#
+# Get all CID specific data
+#	
+	foreach my $cid (@cids) 
+	{
+
+		$cid_counter++;
+
+		if ( $flags{'debug'} )
+		{ 
+			if ( $cid_counter > $debug_cid ) 
+			{ 
+				next; 
+			} 
+		}
+
+		$timestamp{$cid} = time();
+
+		if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+		{
+			print "\ntimestamp\n";
+			print Dumper \%timestamp;
+		}
+
+		if ( `/usr/bin/psql -At -h 10.1.106.130 -U postgres mxl -c "select count(customer_id) from mxl_customer where customer_id=$cid"` >= 1 )
+		{
+			$pod{$cid} = 1;
+			$mypod = 1;
+		}
+		else
+		{
+			$pod{$cid} = 2;
+		}
+
+		$ip = `/mxl/sbin/dnsdir-cust $cid search.mas`;
+
+		$segment{$cid} = substr($ip,-2,1);
+		chomp($segment{$cid});
+
+		if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+		{
+			print "\npod\n";
+			print Dumper \%pod;
+			print "\nsegment\n";
+			print Dumper \%segment;
+		}
+
+		$ipsolr = (`/mxl/sbin/dnsdir-cust $cid solr | sed s/"*"//g`);
+		@solr = split(/\//,$ipsolr);
+
+		$hstsolrip{$cid} = $solr[1];
+		chomp($hstsolrip{$cid});
+
+		$latsolrip{$cid} = $solr[0];
+		chomp($latsolrip{$cid});
+
+		$hstmasip{$cid} = `/mxl/sbin/dnsdir-cust $cid ingest.mas`;
+		chomp($hstmasip{$cid});
+
+		$latmasip{$cid} = `/mxl/sbin/dnsdir-cust $cid search.mas`;
+		chomp($latmasip{$cid});
+
+		if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+		{
+			print "\nhosting solr IP\n";
+			print Dumper \%hstsolrip;
+			print "\nlatisys solr IP\n";
+			print Dumper \%latsolrip;
+			print "\nhosting mas IP\n";
+			print Dumper \%hstmasip;
+			print "\nlatisys mas IP\n";
+			print Dumper \%latmasip;
+		}
+	
+		$cstnam{$cid} = `/usr/bin/psql -At -h 10.$pod{$cid}.106.130 -U postgres mxl -c "select name from mxl_customer where customer_id=$cid"`;
+		chomp($cstnam{$cid});
+
+		if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+		{
+			print "\ncustomer name\n";
+			print Dumper \%cstnam;
+		}
+
+		$hstcnt{$cid} = `/mxl/sbin/solr --solr cid-$cid.writer.solr.pod$pod{$cid}.director.mxlogic.net --cust=$cid count 2>/dev/null`;
+		chomp($hstcnt{$cid});
+		$latcnt{$cid} = `/mxl/sbin/solr --solr cid-$cid.reader.solr.pod$pod{$cid}.director.mxlogic.net --cust=$cid count 2>/dev/null`;
+		chomp($latcnt{$cid});
+
+		if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+		{
+			print "\nhosting DNS dir count\n";
+			print Dumper \%hstcnt;
+			print "\nlatisys DNS dir count\n";
+			print Dumper \%latcnt;
+		}
+
+		$indexstr = `/mxl/sbin/arindex-search -i $hstsolrip{$cid} -c $cid -q 'type:message' -n 1 -f 'return_all'  | grep ^Found `;
+		@indexcnt = split(/\s+/,$indexstr);
+		$hstndxcnt{$cid} = $indexcnt[1];
+		chomp($hstndxcnt{$cid});
+
+		$indexstr = `/mxl/sbin/arindex-search -i $latsolrip{$cid} -c $cid -q 'type:message' -n 1 -f 'return_all'  | grep ^Found `;
+		@indexcnt = split(/\s+/,$indexstr);
+		$latndxcnt{$cid} = $indexcnt[1];
+		chomp($latndxcnt{$cid});
+
+		if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+		{
+			print "\nhosting index count\n";
+			print Dumper \%hstndxcnt;
+			print "\nlatisys index count\n";
+			print Dumper \%latndxcnt;
+		}
+
+		$hstseg{$cid} = `ssh $hstsolrip{$cid} "su - mxl-archive -c '/bin/ls -1 /mxl/msg_archive/solr/data/$cid/index'" 2>/dev/null | grep -c "_"`;
+		chomp($hstseg{$cid});
+
+		$latseg{$cid} = `ssh $latsolrip{$cid} "su - mxl-archive -c '/bin/ls -1 /mxl/msg_archive/solr/data/$cid/index'" 2>/dev/null | grep -c "_"`;
+		chomp($latseg{$cid});
+
+		if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+		{
+			print "\nhosting segment count\n";
+			print Dumper \%hstseg;
+			print "\nlatisys segment count\n";
+			print Dumper \%latseg;
+		}
+
+		$solrej{$cid} = `ssh $hstmasip{$cid} "if [ -d /var/tmp/index_reject/solr-primary/$cid -o -d /var/tmp/index_reject/solr-secondary/$cid ] ; then /usr/bin/find /var/tmp/index_reject/solr-*/$cid  -type f -name 111111* -print | wc -l ; else echo 0;fi"`;
+		chomp($solrej{$cid});
+
+		$masrej{$cid} = `ssh $hstmasip{$cid} "if [ -d /var/tmp/index_reject/mas/$cid ] ; then /usr/bin/find /var/tmp/index_reject/mas/$cid  -type f -name 111111* -print | wc -l ; else echo 0;fi"`;
+		chomp($masrej{$cid});
+
+		if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+		{
+			print "\nsolr rejects\n";
+			print Dumper \%solrej;
+			print "\nmas rejects\n";
+			print Dumper \%masrej;
+		}
+
+		$usrcnt{$cid} = `/usr/bin/psql -At -h 10.$pod{$cid}.106.130 -U postgres mxl -c "select billed_users_qty from arc_product_settings where id=$cid"`;
+		chomp($usrcnt{$cid});
+
+		if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+		{
+			print "\nuser count\n";
+			print Dumper \%usrcnt;
+		}
+
+		$mscnt{$cid} = `/usr/bin/psql -At -h 10.$pod{$cid}.106.130 -U postgres mxl -c "select count(server_id) from arc_mail_source where id=$cid and active=1"`;
+		chomp($mscnt{$cid});
+
+		if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+		{
+			print "\nmail source count\n";
+			print Dumper \%mscnt;
+		}
+
+#
+# Handle each mail source for this CID
+#
+      @mailers = Arch::sids_from_cid($cid);
+
+		if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+		{
+			print "\nmailers\n";
+			print Dumper \@mailers;
+		}
+
+      foreach my $sid (@mailers) 
+		{
+
+         $ms_ref = Arch::ms_from_sid($sid);
+         %ms_hash = %$ms_ref;
+
+			$ms_timestamp{$sid} = time();
+			chomp($ms_timestamp{$sid});
+
+			$ms_status{$sid} = `/usr/bin/psql -At -h 10.1.106.130 -U postgres mxl -c "select last_poll_status from arc_mail_source where server_id=$sid"`;
+			chomp($ms_status{$sid});
+
+			$ms_host{$sid} = $ms_hash{'server_host'};
+			chomp($ms_host{$sid});
+
+			$ms_user{$sid} = $ms_hash{'username'};
+			chomp($ms_user{$sid});
+
+			$ms_port{$sid} = $ms_hash{'server_port'};
+			chomp($ms_port{$sid});
+
+			$ms_type{$sid} = `/usr/bin/psql -At -h 10.1.106.130 -U postgres mxl -c "select type_id from arc_mail_source where server_id=$sid"`;
+			chomp($ms_type{$sid});
+
+			$ms_name{$sid} = `/usr/bin/psql -At -h 10.1.106.130 -U postgres mxl -c "select name from mxl_mail_source_type where type_id=$ms_type{$sid}"`;
+			chomp($ms_name{$sid});
+
+			$ms_desc{$sid} = `/usr/bin/psql -At -h 10.1.106.130 -U postgres mxl -c "select description from mxl_mail_source_type where type_id=$ms_type{$sid}"`;
+			chomp($ms_desc{$sid});
+
+
+			if ( $ms_status{$sid} == 0 )
+			{
+         	$cmd =   "/usr/local/bin/opsadmin/arc_check_ms.pl -c ".
+               	"--host $ms_hash{'server_host'} ".
+               	"--user $ms_hash{'username'} ".
+               	"--port $ms_hash{'server_port'}";
+
+         	$results = `$cmd`;
+				chomp($results);
+
+				$ms_backlog{$sid} = int($results);
+				chomp($ms_backlog{$sid});
+	
+			}
+			else
+			{
+				$ms_backlog{$sid} = 0;
+			}
+
+			if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+			{
+				print "\nmail source timestamp\n";
+				print Dumper \%ms_timestamp;
+				print "\nmail source status\n";
+				print Dumper \%ms_status;
+				print "\nmail source host\n";
+				print Dumper \%ms_host;
+				print "\nmail source user\n";
+				print Dumper \%ms_user;
+				print "\nmail source port\n";
+				print Dumper \%ms_port;
+				print "\nmail source type\n";
+				print Dumper \%ms_type;
+				print "\nmail source name\n";
+				print Dumper \%ms_name;
+				print "\nmail source descritpion\n";
+				print Dumper \%ms_desc;
+				print "\nmail source backlog\n";
+				print Dumper \%ms_backlog;
+			}
+
+#
+# ms_status meanings (return code from arfetchmail
+#
+#
+# 			0     One  or more messages were successfully retrieved (or, if the -c option was selected,
+#					were found waiting but not retrieved).
+#			
+#			1     There was no mail awaiting retrieval.  (There may have been old  mail  still  on  the
+#					server but not selected for retrieval.)
+#			
+#			2     An  error  was encountered when attempting to open a socket to retrieve mail.  If you
+#					don’t know what a socket is, don’t worry about it -- just treat this as an  ’unrecov-
+#					erable  error’.   This error can also be because a protocol fetchmail wants to use is
+#					not listed in /etc/services.
+#			
+#			3     The user authentication step failed.  This usually means that a  bad  user-id,  pass-
+#					word, or APOP id was specified.  Or it may mean that you tried to run fetchmail under
+#					circumstances where it did not have standard input attached to a terminal  and  could
+#					not prompt for a missing password.
+#			
+#			4     Some sort of fatal protocol error was detected.
+#			
+#			5     There was a syntax error in the arguments to fetchmail.
+#			
+#			6     The run control file had bad permissions.
+#			
+#			7     There  was  an  error  condition  reported by the server.  Can also fire if fetchmail
+#					timed out while waiting for the server.
+#			
+#			8     Client-side exclusion error.  This means  fetchmail  either  found  another  copy  of
+#					itself  already  running,  or failed in such a way that it isn’t sure whether another
+#					copy is running.
+#			
+#			9     The user authentication step failed because the server responded  "lock  busy".   Try
+#					again  after a brief pause!  This error is not implemented for all protocols, nor for
+#					all servers.  If not implemented for your server, "3" will be returned  instead,  see
+#					above.   May  be  returned  when talking to qpopper or other servers that can respond
+#					with "lock busy" or some similar text containing the word "lock".
+#			
+#			10    The fetchmail run failed while trying to do an SMTP port open or transaction.
+#			
+#			11    Fatal DNS error.  Fetchmail encountered an error while performing  a  DNS  lookup  at
+#					startup and could not proceed.
+#			
+#			12    BSMTP batch file could not be opened.
+#			
+#			13    Poll terminated by a fetch limit (see the --fetchlimit option).
+#			
+#			14    Server busy indication.
+#			
+#			23    Internal error.  You should see a message on standard error with details.
+#			
+
+
+			$insert = "psql -U postgres -d watcher -h localhost -c \"insert into arc_mailsource (ms_epochtime,cid,sid,cstnam,ms_status,ms_host,ms_user,ms_port,ms_type,ms_name,ms_desc,ms_backlog) values (to_timestamp($ms_timestamp{$cid}),$cid,$sid,\'$cstnam{$cid}\',$ms_status{$sid},\'$ms_host{$sid}\',\'$ms_user{$sid}\',$ms_port{$sid},\'$ms_type{$sid}\',\'$ms_name{$sid}\',\'$ms_desc{$sid}\',$ms_backlog{$sid})\"";
+
+			if ( $flags{'debug'} ) 
+			{			# do not populate the database when debugging
+
+				print "\ninsert command\n";
+				print Dumper $insert;
+			}
+			else
+			{
+	
+      		system("$insert");
+	
+			}
+		} 	# end mail source loop
+
+
+		$hstseqnum{$cid} = `/mxl/sbin/mas -h cid-$cid.ingest.mas.pod$pod{$cid}.director.mxlogic.net seq cust=$cid 2>/dev/null`;
+		chomp($hstseqnum{$cid});
+		$latseqnum{$cid} = `/mxl/sbin/mas -h cid-$cid.search.mas.pod$pod{$cid}.director.mxlogic.net seq cust=$cid 2>/dev/null`;
+		chomp($latseqnum{$cid});
+
+		if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+		{
+			print "\nhosting sequence number\n";
+			print Dumper \%hstseqnum;
+			print "\nlatisys sequence number\n";
+			print Dumper \%latseqnum;
+		}
+
+		$ndxseqstr = `ssh $hstsolrip{$cid} "/mxl/sbin/arindex-search -i 127.0.0.1 -c $cid -q'type:message' -S -index_date -f message_sequence_id -n 1 2>/dev/null " | grep message_sequence_id | sed s/">"/"|"/g | sed s/"<"/"|"/g `;
+
+		if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+		{
+			print "\nHosting arindex-search results\n";
+			print Dumper $ndxseqstr;
+		}
+
+		@ndxseq = split(/\|/,$ndxseqstr);
+		$hstndxseqn = $ndxseq[2];
+		$hstndxbklg{$cid} = 0;
+		$hstndxbklg{$cid} = $hstseqnum{$cid} - $hstndxseqn ;
+		chomp($hstndxbklg{$cid});
+
+		$ndxseqstr = `ssh $latsolrip{$cid} "/mxl/sbin/arindex-search -i 127.0.0.1 -c $cid -q'type:message' -S -index_date -f message_sequence_id -n 1 2>/dev/null " | grep message_sequence_id | sed s/">"/"|"/g | sed s/"<"/"|"/g `;
+
+		if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+		{
+			print "\nLatisys arindex-search results\n";
+			print Dumper $ndxseqstr;
+		}
+
+		@ndxseq = split(/\|/,$ndxseqstr);
+		$latndxseqn = $ndxseq[2];
+		$latndxbklg{$cid} = 0;
+		$latndxbklg{$cid} = $latseqnum{$cid} - $latndxseqn ;
+		chomp($latndxbklg{$cid});
+
+		if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+		{
+			print "\nhosting index backlog\n";
+			print Dumper \%hstndxbklg;
+			print "\nlatisys index backlog\n";
+			print Dumper \%latndxbklg;
+		}
+	}
+
+
+##
+## Create the variables for server processing
+##
+#
+# Create the server specific hashes
+#
+my %srv_seg = ();
+my %srv_timestamp = ();
+my %srv_type = ();
+my %datacenter = ();
+my %DNScnt = ();
+my %dircnt = ();
+my %diskfree = ();
+
+#
+# Non hashes for servers
+#
+my $srv_ip = ();
+my @diskdf = ();
+my $DNSret = ();
+my @DNSlabel = ();
+my $diskdfret = ();
+
+#
+# Get a list of servers
+#
+	foreach my $denpod ($mypod)
+	{
+		foreach my $denseg (1..8)
+		{
+			foreach my $dentype (15,16)
+			{
+				foreach my $dendc (106,107)
+				{
+					$srv_ip = "10.$denpod.$dendc.$dentype$denseg";
+
+					$srv_seg{$srv_ip} = $denseg;
+
+					if( $dendc == 6 )
+					{
+						$datacenter{$srv_ip} = "Latisys";
+					}
+					else
+					{
+						$datacenter{$srv_ip} = "Hosting";
+					}
+
+					if( $dentype == 15 )
+					{
+						$srv_type{$srv_ip} = "mas";
+					}
+					else
+					{
+						$srv_type{$srv_ip} = "solr";
+					}
+				}
+			}
+		}
+	}
+
+	if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+	{
+		print "\nserver ips\n";
+		print Dumper $srv_ip;
+		print "\ndata center\n";
+		print Dumper \%datacenter;
+		print "\nsegment data\n";
+		print Dumper \%srv_seg;
+		print "\nserver type\n";
+		print Dumper \%srv_type;
+	}
+	
+#
+# Get all server specific data
+#
+
+	foreach my $ip (keys %datacenter) 
+	{
+
+		$srv_timestamp{$ip} = time();
+
+		if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+		{
+			print "\nserver timestamp\n";
+			print Dumper \%srv_timestamp;
+		}
+
+		if ( $srv_type{$ip} eq "solr" )
+		{
+			$DNSret = `/mxl/sbin/dnsdirector solr verify -v -v -v | grep $ip`;
+			chomp($DNSret);
+
+			@DNSlabel = split(/\s+/,$DNSret);
+
+			$DNScnt{$ip} = `/mxl/sbin/dnsdirector solr verify -v -v -v | grep -vw $ip | grep -c $DNSlabel[1]`;
+			chomp($DNScnt{$ip});
+
+			if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+			{
+				print "\nDNS director count\n";
+				print Dumper \%DNScnt;
+			}
+
+			$dircnt{$ip} = `ssh $ip "su - mxl-archive -c 'ls -ld /mxl/msg_archive/solr/data/[0-9]*[0-9] | wc -l'"`;
+			chomp($dircnt{$ip});
+
+			if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+			{
+				print "\nDirectory (customer) count\n";
+				print Dumper \%dircnt;
+			}
+
+			$diskdfret = `ssh $ip /bin/df -m /var/msg_archive/solr | grep /var`;
+			@diskdf = split(/\s+/,$diskdfret);
+			$diskfree{$ip} = $diskdf[3];
+			chomp($diskfree{$ip});
+
+			if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+			{
+				print "\nlocal disk free space\n";
+				print Dumper \%diskfree;
+			}
+		}
+		else
+		{
+			$DNScnt{$ip} = 0;
+			$dircnt{$ip} = 0;
+			$diskfree{$ip} = 0;
+		}
+
+
+	} 	# end server loop
+
+##
+## Handle the Archiving shared storage
+##
+#
+# Define Storage variables
+#
+my %nfs_timestamp = ();
+my %nfsused = ();
+my %nfsfree = ();
+
+my $nfsret = ();
+my @nfsstat = ();
+my @nfsmp = ("/mxl/msg_archive/mas/mnt/latisys1","/mxl/msg_archive/mas/mnt/latisys2","/mxl/msg_archive/mas/mnt/hosting1","/mxl/msg_archive/mas/mnt/hosting2");
+
+#
+# Get the storage data
+#
+	foreach my $mp (@nfsmp)
+	{
+		foreach my $mydc (106,107)
+		{
+			$nfs_timestamp{$mydc.$mp} = time();
+
+			$nfsret = `ssh 10.$mypod.$mydc.151 /bin/df -m $mp | grep $mp`;
+			@nfsstat = split(/\s+/,$nfsret);
+
+			if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+			{
+				print "\ndf return\n";
+				print Dumper \@nfsstat;
+			}
+
+			$nfsused{$mydc.$mp} = $nfsstat[2];
+			$nfsfree{$mydc.$mp} = $nfsstat[3];
+	
+			if (( $flags{'debug'} ) && ( $flags{'verbose'} ))
+			{
+				print "\nNFS used\n";
+				print Dumper \%nfsused;
+				print "\nNFS free\n";
+				print Dumper \%nfsfree;
+			}
+		}
+
+	} 	#end NFS loop
+
+##
+## In debug but NOT verbose dump all hashes
+##
+if (( $flags{'debug'} ) && ( ! $flags{'verbose'} ))
+{
+
+	print "\ncids\n";
+	print Dumper \@cids;
+	print "\ntimestamp\n";
+	print Dumper \%timestamp;
+	print "\npod\n";
+	print Dumper \%pod;
+	print "\nsegment\n";
+	print Dumper \%segment;
+	print "\nhosting solr IP\n";
+	print Dumper \%hstsolrip;
+	print "\nlatisys solr IP\n";
+	print Dumper \%latsolrip;
+	print "\nhosting mas IP\n";
+	print Dumper \%hstmasip;
+	print "\nlatisys mas IP\n";
+	print Dumper \%latmasip;
+	print "\ncustomer name\n";
+	print Dumper \%cstnam;
+	print "\nhosting DNS dir count\n";
+	print Dumper \%hstcnt;
+	print "\nlatisys DNS dir count\n";
+	print Dumper \%latcnt;
+	print "\nhosting index count\n";
+	print Dumper \%hstndxcnt;
+	print "\nlatisys index count\n";
+	print Dumper \%latndxcnt;
+	print "\nhosting segment count\n";
+	print Dumper \%hstseg;
+	print "\nlatisys segment count\n";
+	print Dumper \%latseg;
+	print "\nsolr rejects\n";
+	print Dumper \%solrej;
+	print "\nmas rejects\n";
+	print Dumper \%masrej;
+	print "\nuser count\n";
+	print Dumper \%usrcnt;
+	print "\nmail source count\n";
+	print Dumper \%mscnt;
+	print "\nmailers\n";
+	print Dumper \@mailers;
+	print "\nresults\n";
+	print Dumper $results;
+	print "\nmail source count\n";
+	print Dumper $count;
+	print "\nmail source status\n";
+	print Dumper \%ms_status;
+	print "\nhosting sequence number\n";
+	print Dumper \%hstseqnum;
+	print "\nlatisys sequence number\n";
+	print Dumper \%latseqnum;
+	print "\nHosting arindex-search results\n";
+	print Dumper $ndxseqstr;
+	print "\nLatisys arindex-search results\n";
+	print Dumper $ndxseqstr;
+	print "\nhosting index backlog\n";
+	print Dumper \%hstndxbklg;
+	print "\nlatisys index backlog\n";
+	print Dumper \%latndxbklg;
+	print "\nserver ips\n";
+	print Dumper $srv_ip;
+	print "\ndata center\n";
+	print Dumper \%datacenter;
+	print "\nsegment data\n";
+	print Dumper \%srv_seg;
+	print "\nserver type\n";
+	print Dumper \%srv_type;
+	print "\nserver timestamp\n";
+	print Dumper \%srv_timestamp;
+	print "\nDNS director count\n";
+	print Dumper \%DNScnt;
+	print "\nDirectory (customer) count\n";
+	print Dumper \%dircnt;
+	print "\nlocal disk free space\n";
+	print Dumper \%diskfree;
+	print "\ndf return\n";
+	print Dumper \@nfsstat;
+	print "\nNFS used\n";
+	print Dumper \%nfsused;
+	print "\nNFS free\n";
+	print Dumper \%nfsfree;
+	print "\nmail source timestamp\n";
+	print Dumper \%ms_timestamp;
+	print "\nmail source status\n";
+	print Dumper \%ms_status;
+	print "\nmail source host\n";
+	print Dumper \%ms_host;
+	print "\nmail source user\n";
+	print Dumper \%ms_user;
+	print "\nmail source port\n";
+	print Dumper \%ms_port;
+	print "\nmail source type\n";
+	print Dumper \%ms_type;
+	print "\nmail source name\n";
+	print Dumper \%ms_name;
+	print "\nmail source descritpion\n";
+	print Dumper \%ms_desc;
+	print "\nmail source backlog\n";
+	print Dumper \%ms_backlog;
+
+}
+
+##
+## Populate the three Archiving tables in the watcher database
+##
+$cid_counter = 0;
+
+#
+# Populate the CID table
+#
+	foreach my $cid (@cids) 
+	{
+
+		$cid_counter++;
+
+		if ( $flags{'debug'} )
+		{ 
+			if ( $cid_counter > $debug_cid ) 
+			{ 
+				next; 
+			} 
+		}
+
+			$insert = "psql -U postgres -d watcher -h localhost -c \"insert into arc_cid (epochtime,cid,pod,hstcnt,latcnt,cstnam,hstsolrip,latsolrip,hstmasip,latmasip,hstndxcnt,latndxcnt,hstseg,latseg,solrej,masrej,mscnt,usrcnt,hstndxbklg,latndxbklg,hstseqnum,latseqnum,segment) values (to_timestamp($timestamp{$cid}),$cid,$pod{$cid},$hstcnt{$cid},$latcnt{$cid},\'$cstnam{$cid}\',\'$hstsolrip{$cid}\',\'$latsolrip{$cid}\',\'$hstmasip{$cid}\',\'$latmasip{$cid}\',$hstndxcnt{$cid},$latndxcnt{$cid},$hstseg{$cid},$latseg{$cid},$solrej{$cid},$masrej{$cid},$mscnt{$cid},$usrcnt{$cid},$hstndxbklg{$cid},$latndxbklg{$cid},$hstseqnum{$cid},$latseqnum{$cid},$segment{$cid})\"";
+
+		if ( $flags{'debug'} ) 
+		{			# do not populate the database when debugging
+
+			print "\ninsert command\n";
+			print Dumper $insert;
+		}
+		else
+		{
+
+      	system("$insert");
+
+		}
+
+	}	#end write CID information loop
+
+#
+# Populate the Server table
+#
+	foreach my $ip (keys %datacenter) 
+	{
+
+		$insert = "psql -U postgres -d watcher -h localhost -c \"insert into arc_server (epochtime,srv_ip,srv_seg,srv_type,datacenter,DNScnt,dircnt,diskfree) values (to_timestamp($srv_timestamp{$ip}),\'$ip\',\'$srv_type{$ip}\',\'$datacenter{$ip}\',$DNScnt{$ip},$dircnt{$ip},$diskfree{$ip})\"";
+
+		if ( $flags{'debug'} ) 
+		{			# do not populate the database when debugging
+
+			print "\ninsert command\n";
+			print Dumper $insert;
+		}
+		else
+		{
+
+	     	system("$insert");
+
+		}
+
+	} 	#end write Server information loop
+
+#
+# Populate the Storage table
+#
+	foreach my $mp (@nfsmp)
+	{
+		foreach my $mydc (106,107)
+		{
+
+			$insert = "psql -U postgres -d watcher -h localhost -c \"insert into arc_storage (epochtime,mydc,mp,nfsused,nfsfree) values (to_timestamp($nfs_timestamp{$mydc.$mp}),$mydc,\'$mp\',$nfsused{$mydc.$mp},$nfsfree{$mydc.$mp})\"";
+
+			if ( $flags{'debug'} ) 
+			{			# do not populate the database when debugging
+
+				print "\ninsert command\n";
+				print Dumper $insert;
+			}
+			else
+			{
+
+      		system("$insert");
+
+			}
+
+		}
+
+	}	#end write Storage information loop
+
+
+##
+## End main  -  Begin subroutines
+##
+
+#
+# Get all command line options into flags hash
+#
+sub get_opts() 
+{
+
+	use Getopt::Long qw(:config no_ignore_case bundling);
+	Getopt::Long::Configure("bundling");
+	GetOptions(
+		'debug|d'       => \$flags{'debug'},
+		'verbose|v'     => \$flags{'verbose'},
+
+		'help|usage|h'  => sub {warn &usage; exit 1;})
+			or die &usage;
+
+	defined($flags{'debug'}) || ($flags{'debug'} = 0);
+	defined($flags{'verbose'}) || ($flags{'verbose'} = 0);
+}
+
+# Subroutine:   usage
+# Args:         <void>
+# Return Value: <void>
+# Purpose:      Write the appropriate usage to STDOUT.
+sub usage()
+{
+my $usage = <<EOF;
+Usage: $0 [OPTIONS]
+
+    *** NOTE: what ever I need to put in this section of this. ***
+
+    -v, --verbose             Verbose Mode
+    -d, --debug               Debug Mode
+    -h, --help                Print this help
+EOF
+
+        print $usage;
+}
+

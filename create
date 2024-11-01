@@ -1,0 +1,86 @@
+#!/bin/bash
+
+set -x
+
+/usr/bin/initdb -D /home/data -E UNICODE --lc-collate=C --lc-ctype=C -U postgres 
+
+ln -s /var/lib/pgsql/data /home/data
+
+/etc/init.d/postgresql start
+
+/usr/bin/createdb -T template1 -E UNICODE -h localhost -U postgres watcher
+
+
+/usr/bin/psql -h localhost -U postgres watcher -c "create table arc_cid ( 
+
+epochtime timestamp with time zone not null,
+cid int8 not null,
+solrcnt int8 not null,
+cstnam text not null,
+solrlabel text not null,
+solrseg smallint not null,
+solrej int4 not null,
+sizemb int8 not null,
+masrej int4 not null,
+mscnt int4 not null,
+usrcnt int8 not null,
+solrndxbklg int8 not null,
+solrseqnum int8 not null,
+ndx24 int8 not null,
+
+primary key (epochtime,cid))"
+
+
+
+/usr/bin/psql -h localhost -U postgres watcher -c "create table arc_mailsource ( 
+
+ms_epochtime timestamp with time zone not null,
+cid int8 not null,
+sid int8 not null,
+cstnam text not null,
+ms_status smallint not null,
+ms_host text not null,
+ms_user text not null,
+ms_port int not null,
+ms_type text not null,
+ms_name text not null,
+ms_desc text not null,
+ms_backlog int8 not null,
+
+primary key (ms_epochtime,cid,sid))"
+
+
+
+/usr/bin/psql -h localhost -U postgres watcher -c "create table arc_server ( 
+
+epochtime timestamp with time zone not null,
+srv_ip inet not null,
+srv_type char(4) not null,
+datacenter text not null,
+DNScnt int4 not null,
+dircnt int4 not null,
+diskfree int8 not null,
+
+primary key (epochtime,srv_ip))"
+
+
+
+/usr/bin/psql -h localhost -U postgres watcher -c "create table arc_storage ( 
+
+epochtime timestamp with time zone not null, 
+ip inet not null, 
+mp text not null, 
+nfsused int8 not null, 
+nfsfree int8 not null, 
+
+primary key (epochtime, ip, mp))"
+
+###
+###/usr/bin/psql -h localhost -U postgres watcher -c "create table arc_dnsdirector ( 
+###
+###epochtime timestamp with time zone not null, 
+###cid int8 not null,
+###solrlabel text not null, 
+###
+###primary key (epochtime, cid))"
+###

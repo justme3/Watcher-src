@@ -1,0 +1,117 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use Data::Dumper;
+
+my $pair_dist = ("10.1.107.1");
+
+my %srv_seg = ();
+my %srv_timestamp = ();
+my %srv_type = ();
+my %datacenter = ();
+my %DNScnt = ();
+my %dircnt = ();
+my %diskfree = ();
+
+my $srv_ip = ();
+my $lastoctet = ();
+my @diskdf = ();
+my $DNSret = ();
+my @DNSlabel = ();
+my $diskdfret = ();
+my @masips = ();
+my @masips1 = ();
+my @masips2 = ();
+my @solrips = ();
+my @solrips1 = ();
+my @solrips2 = ();
+my @ip = ();
+my $cmd = ();
+my $test = ();
+
+#
+# Get a list of servers
+#
+   open(MAS,"/root/dist/archiving_mas") || die "Cannot open /root/dist/archiving_mas: $!";
+   @masips1 = <MAS>;
+   close(MAS);
+
+	@masips2 = `/usr/bin/ssh $pair_dist cat /root/dist/archiving_mas`;
+
+	@masips = (@masips1, @masips2);
+	
+   foreach my $srv_ip (@masips)
+   {
+      $srv_type{$srv_ip} = "mas";
+
+      @ip = split(/\./,$srv_ip);
+
+      if ( $ip[2] == 106 )
+      {
+         $datacenter{$srv_ip} = "Latisys";   
+      }
+      else
+      {
+         $datacenter{$srv_ip} = "Hosting";
+      }
+
+      $lastoctet = $ip[3];
+
+      if ( $lastoctet <= 159 )
+      {
+         $srv_seg{$srv_ip} = $lastoctet - 150;
+      }
+      else
+      {
+         $srv_seg{$srv_ip} = $lastoctet - 160;
+      }
+
+   }
+
+	open(SOLR,"/root/dist/archiving_solr") || die "Cannot open /root/dist/archiving_solr: $!";
+   @solrips1 = <SOLR>;
+   close(SOLR);
+
+	@solrips2 = `/usr/bin/ssh $pair_dist cat /root/dist/archiving_solr`;
+
+	@solrips = (@solrips1, @solrips2);
+	
+   foreach my $srv_ip (@solrips)
+   {
+      $srv_type{$srv_ip} = "solr";
+
+      @ip = split(/\./,$srv_ip);
+
+      if ( $ip[2] == 106 )
+      {
+         $datacenter{$srv_ip} = "Latisys";
+      }
+      else
+      {
+         $datacenter{$srv_ip} = "Hosting";
+      }
+
+      $lastoctet = $ip[3];
+
+      if ( $lastoctet <= 159 )
+      {
+         $srv_seg{$srv_ip} = $lastoctet - 150;
+      }
+      else
+      {
+         $srv_seg{$srv_ip} = $lastoctet - 160;
+      }
+
+   }
+
+      print "\nsolr ip addresses\n";
+      print Dumper \@solrips;
+      print "\ndata center\n";
+      print Dumper \%datacenter;
+      print "\nsegment data\n";
+      print Dumper \%srv_seg;
+      print "\nserver type\n";
+      print Dumper \%srv_type;
+
+

@@ -1,0 +1,1583 @@
+<?php
+// config.ini - actual portal configuration file.
+// config.ini.base - template portal configuration file.
+//
+// The first time the portal package is installed, the postinstall will
+// automatically enter values for system configuration constants
+// in the config.ini.base file.  It will then copy the config.ini.base
+// to config.ini so that the portal will function.  On subsequent portal
+// installs, the postinstall will update the config.ini.base only and
+// compare the config.ini.base to the config.ini.  If they are different,
+// the postinstall will inform the installer that they must manually
+// inspect and update the config.ini to bring it up to date.
+//
+// IMPORTANT LOCALIZATION NOTES:
+// Currently, there are some constants in this config file that contain
+// english phrases.  Wherever you see english phrases being passed to a
+// function _L(), these phrases are being automatically converted to the
+// language associated with a user's selected locale via a message
+// catalog lookup.  Changing the default english phrase will most likely
+// result in the new english phrase showing up in all locales since it
+// won't be in the message catalog and adding messages to each locale-specific
+// catalog is not supported.
+//
+// As a workaround for this, php pages that use one of these constants will
+// first see if a constant exists with a locale suffix matching the user's
+// locale (minus any locale charset extension e.g. ja_JP instead
+// of ja_JP.utf8).  If it exists, it uses it instead of the base version.
+// In this way, you can create locale-specific values of constants that
+// contain english phrases if required.
+//
+//  Adding a locale suffix:
+//      [BASE_CONSTANT_NAME]_[locale]
+//      Example: EXAMPLE_ja_JP
+//
+//  Current set of constants that can be localized:
+//  - DEFAULT_COPYRIGHT
+//  - DEFAULT_MX_CONTROL_CONSOLE_NAME
+//  - DEFAULT_TAGLINE_ALT
+//  - MXL_SAFE_VIEW_MSG_CONTENT_DISABLED_TEXT
+//  - SPAM_OUTLOOK_DWNLD_MSG
+//  - MXL_PRIVACY_INC (allows locale-specific privacy policy include files)
+//
+//  !! VALUES OF LOCALE-SPECIFIC CONSTANTS MUST BE IN UTF-8 CHARACTER SET !!
+
+// ************************************************************************
+// ** SYSTEM **
+// ************************************************************************
+//
+// NOTE: post install will replace all occurrences of the path '/mxl/'
+// with the actual root directory specified during install.
+define('MXL_ROOT_DIR', '/mxl/');
+
+// Specify path to the portal root directory. SAPI/DAPI require this.
+define('APP_ROOT_DIR', MXL_ROOT_DIR . 'var/httpd/virtuals/portal/htdocs/');
+
+//
+// ------------------------------------------------------------------------
+// DOWN PAGE CONTROL CONSTANTS
+// To display the portal down page and prevent connections to the mxl and
+// mxl_log dbs, set DISPLAY_PORTAL_DOWN_PAGE to true.
+// When DISPLAY_PORTAL_DOWN_PAGE is true, the PLANNED_OUTAGE_TEXT is
+// displayed.  When the portal attempts to connect to a db and can't,
+// the down page will appear and will display the UNPLANNED_OUTAGE_TEXT.
+// ------------------------------------------------------------------------
+
+define('DISPLAY_PORTAL_DOWN_PAGE', false);
+define('PLANNED_OUTAGE_TEXT','The information you selected is temporarily unavailable due to scheduled maintenance. Please try again in four hours.'); 
+define('UNPLANNED_OUTAGE_TEXT','The information you selected is temporarily unavailable. Please try again later.');
+
+define('REQUIRE_SSL',       true);  // true | false
+define('MXL_INDEX',         'portal.mxlogic.com'); // MXL Portal Hostname
+define('CORDA_SERVER',      'http://localhost:2001');
+define('DB_LOGIN_MXL',      'dbname=mxl host=10.1.106.130 port=5432 user=postgres password=dbG0d');
+define('DB_LOGIN_MXL_DIRECTOR', 'dbname=mxl_director host=10.1.106.130 port=5432 user=postgres password=dbG0d');
+define('DB_LOGIN_MXL_FS', 'dbname=mxl_fs host=10.1.106.130 port=5432 user=postgres password=dbG0d');
+define('DB_LOGIN_MXL_WEB_LOG', 'dbname=mxl_wds_log host=10.1.106.133 port=5432 user=postgres password=dbG0d');
+define('DB_LOGIN_MXL_MESSAGE_AUDIT', 'dbname=mxl_audit host=10.2.107.131 port=6453 user=postgres password=dbG0d');
+
+// MXL_QUARANTINE_VHOST defines the virtual hostname to use when accessing
+// quarantined messages.
+define('MXL_QUARANTINE_VHOST', 'quarantine');
+
+// One web server must be defined as the primary web server.
+// When branded resellers or customers upload new logo and/or tagline
+// images via the MX Control Console, the images are uploaded to the
+// logos directory on the PRIMARY_WEB_HOST.  The uploaded images must be
+// distributed from the PRIMARY_WEB_HOST logos directory to the logos
+// directory on each of the remaining web servers using rsync or
+// similar solution.  Image distribution should be configured so that
+// the images are up to date on all web servers within 10 minutes or
+// less from the time that an image is updated on the PRIMARY_WEB_HOST.
+//
+define('PRIMARY_WEB_HOST', '127.0.0.1');
+
+// Set a general limit on the file size that a user can upload into
+// a list such as the domain exempt list, spam exempt list, sender allow/deny
+// lists, etc.  Note that this does not impose a limit on the number of
+// entries allowed in a list.  Large files can be broken into multiple files
+// that do not exceed the size limit and be uploaded separately when required.
+define('MAX_LIST_UPLOAD_SIZE_BYTES', 102400);
+
+// MTA_REPLICATION_MODE declares the replication mode currently in use
+// for replicating data from the db to the MTAs.  If this constant does
+// not exist, ldap mode is assumed.
+// Valid Values: 'file' | 'ldap'
+define('MTA_REPLICATION_MODE',      'ldap');
+
+// --------------------------------------------------------------------------
+// Time Zone Constants
+//
+// Set PORTAL_TIME_ZONE to the default time zone that you want this
+// instance of the portal to use.  For a list of currently supported
+// time zones, refer to the util_classes/class.Timezones.php file.
+// A user can pick their own time zone which will override this default
+// setting. If ENABLE_MXL_PHP_ERROR_HANDLER is true, then some php log
+// messages will be logged in this default time zone.
+//
+// Set MTA_TIME_ZONE to the time zone of the mta servers.
+// If there are multiple pods of mta servers using different time zones,
+// the constant should be set to the time zone furthest east of the portal time
+// zone. If all mta time zones are west of the portal time zone, you can
+// either use the time zone closest to the portal time zone or simply
+// comment out the MTA_TIME_ZONE constant.
+//
+// The offset between portal time zone and mta time zone determines
+// when and if "tomorrow" is included in the quarantine day selection list
+// in the domain and user quarantine index pages.
+//
+// Set DAILY_ROLLUP_TIME_ZONE to the timezone that rollups are being performed
+// from. Reports will be generated with respect to this time zone and time
+// scaled as necessary for the reporting user's time zone preference. In most
+// cases DAILY_ROLLUP_TIME_ZONE will have the same value as MTA_TIME_ZONE. In
+// fact, when DAILY_ROLLUP_TIME_ZONE isn't defined it will default to the
+// value of MTA_TIME_ZONE.
+//
+// --------------------------------------------------------------------------
+define('PORTAL_TIME_ZONE', 'America/Denver');
+define('MTA_TIME_ZONE',    'America/Denver');
+define('DAILY_ROLLUP_TIME_ZONE', 'America/Denver');
+
+// --------------------------------------------------------------------------
+// Quarantine View Constants
+//   USER_QUAR_DEFAULT_ALL_DAYS: true | false
+//   When set to true, when a user accesses their spam quarantine, the
+//   default quarantine day selection will default to
+//   "View all quarantine messages" instead of the date for today.
+//
+//   ADMIN_QUAR_DEFAULT_ALL_DAYS:  true | false
+//   When set to true, when a user with quarantine manager administrative rights
+//   or higher accesses the domain quarantine, the
+//   default quarantine day selection will default to
+//   "View all quarantine messages" instead of the date for today.
+//
+//   Because selecting all days requires a query to be executed that
+//   hits all the quarantine daily tables for the full quarantine retention period
+//   of the user's domain, there is a tradeoff between user convenience and
+//   performance when setting either of these constants to true.
+//
+define('USER_QUAR_DEFAULT_ALL_DAYS',  false);
+define('ADMIN_QUAR_DEFAULT_ALL_DAYS', false);
+
+// ************************************************************************
+// Internationalization / Localization Constants
+// ************************************************************************
+
+// L10N_SUPPORT enables (true) or disables (false) localization 
+// (language selection) in the MX Control Console UI. Please note 
+// that in order for language selection to appear in the UI, 
+// L10N_SUPPORT must be set to true and there must be at least 
+// one MX Logic language package rpm installed.
+define('L10N_SUPPORT', true);
+
+// L10N_SUPPORT_MAX_ROLE_LEVEL sets the highest user role level for which
+// localization is supported in the MX Control Console UI. Only users with a role
+// less than or equal to the role level specified by L10N_SUPPORT_MAX_ROLE_LEVEL
+// will be able to choose a locale (language) preference other than english.
+// Since the MX Control Console UI is currently only fully localized for the
+// base user role, the default value is 0. As localization support is expanded to
+// cover other areas of the UI accessible to other user roles, this constant can
+// be updated.  If there isn't a concern about mixed language presentation in the 
+// UI for users with admin roles, the role level can be increased as well.
+//
+// Role Values:
+//   0: User
+//   2: Reports Manager
+//   3: Quarantine Manager
+//   6: Domain Admin
+//   8: Customer Admin
+//   9: Reseller Admin
+// 9.5: Support Admin
+//  10: Global Admin
+define('L10N_SUPPORT_MAX_ROLE_LEVEL', 0);
+
+// L10N_LOCALE_PATH sets the path to the locale directory that contains the 
+// locale files installed by the MX Logic language package rpms.  The default
+// value typically should not need to be changed. 
+define('L10N_LOCALE_PATH', MXL_ROOT_DIR . 'var/httpd/virtuals/portal/htdocs/locale');
+
+// ************************************************************************
+// ** GOOGLE ANALYTICS CONFIGURATION
+// ************************************************************************
+// Google analytics logs page view usage.
+define('GOOGLE_ANALYTICS_ID', 'UA-1916555-1');
+define('GOOGLE_ANALYTICS_ENABLED', false);
+
+// ************************************************************************
+// ** NEXT GENERATION USER-INTERFACE DEBUG SETTINGS **
+// ************************************************************************
+// Setting this to TRUE loads the debug versions of EXTJS and does
+// not compress NGUI javascript engine files.
+define('NGUI_DEBUG_JSCRIPT', false);
+
+// Encoding settings:
+// 0 = none
+// 10 = normal
+// 62 = numeric
+// 95 = high ascii (default)
+define('NGUI_JSCRIPT_ENCODING', 95);
+
+// ************************************************************************
+// ** ERROR HANDLING CONSTANTS **
+// ************************************************************************
+// Setting ENABLE_MXL_PHP_ERROR_HANDLER to true will enable a custom
+// handler for php errors.  This handler will write the errors to the error
+// log file defined in php.ini with a timestamp that includes a time zone
+// offset in the time zone defined by the PORTAL_TIME_ZONE constant.
+// The standard php error handler writes timestamps in the
+// time zone active at the time it is invoked without a time zone offset.
+// Therefore, since each user can choose their own time zone, timestamps for
+// errors logged by the standard handler may be in any time zone and it is
+// not possible to identify the time zone from the timestamp.
+// NOTE: PHP does not route fatal errors through custom error handlers and
+// are always handled by the standard php handler.
+//
+define('ENABLE_MXL_PHP_ERROR_HANDLER', true);
+
+// ************************************************************************
+// ** DEFAULT BRANDING CONSTANTS **
+// ************************************************************************
+//
+// If VERIFY_CUSTOM_HOSTNAME is true, then the branding settings page will
+// verify that the value entered for "Custom Hostname" can be used to
+// reach the MX Control Console.  This is recommended to ensure the
+// hostname is properly configured in DNS which is required for proper
+// branding operation.
+define('VERIFY_CUSTOM_HOSTNAME',true);
+
+define('DEFAULT_LOGO_IMG','images/header_01.gif');
+define('DEFAULT_LOGO_IMG_ONCLICK','http://www.mxlogic.com');
+define('DEFAULT_TAGLINE_IMG','images/header_03.gif');
+define('DEFAULT_LOGO_ALT','MX Logic');
+define('DEFAULT_TAGLINE_ALT','return _L("Managed Email Protection and Security Services")');
+define('DEFAULT_SUPPORT_PHONE','');
+// The quotes are necessary around support contact if not entering a well-formed
+// email address.
+define('DEFAULT_SUPPORT_CONTACT','"MX Logic, Inc." <noreply@bounce.mxlogic.com>');
+define('DEFAULT_MX_CONTROL_CONSOLE_NAME','Control Console');
+
+// DEFAULT_MAIL_FROM sets the default envelope mail from header value for
+// email messages that the MX Control Console sends out e.g.
+// password recovery email, alias confirmation email, etc.
+define('DEFAULT_MAIL_FROM', 'noreply@bounce.mxlogic.com');
+
+// If localization of the copyright is required, use the localized version.
+// Otherwise, use the english only version.
+// English only:
+//   define('DEFAULT_COPYRIGHT', 'return sprintf("Copyright &copy; %d MX Logic, Inc. All Rights Reserved.", date("Y"));');
+//
+// Localized:
+//   define('DEFAULT_COPYRIGHT', 'return sprintf("%s &copy; %d MX Logic, Inc. %s", _L("Copyright"), date("Y"), _L("All Rights Reserved."));');
+//
+// NOTE: The value of this constant must be a valid PHP statement that
+//       returns the copyright string.  It is passed through
+//       the PHP eval() function to get the resulting string.
+//
+//       The strings passed to the function _L() are automatically
+//       converted to the user's selected language via a message
+//       catalog lookup.  If you change the strings, most likely the
+//       new strings won't be in the catalog and will always display in
+//       english.
+//
+define('DEFAULT_COPYRIGHT', 'return sprintf("%s &copy; %d MX Logic, Inc. %s", _L("Copyright"), date("Y"), _L("All Rights Reserved."));');
+
+// --------------------------------------------------------------------------
+// Log Data Rollup Intervals
+// These log rollup intervals must match the rollup intervals used by the
+// rollup scripts that run against the log db in order for the portal
+// reports pages to function properly.
+// --------------------------------------------------------------------------
+//
+define('MONTHLY_ROLLUP_INTERVAL', 1);  // Monthly Rollup Interval in months
+define('DAILY_ROLLUP_INTERVAL',   22); // Daily rollup interval in days
+
+// --------------------------------------------------------------------------
+// Quarantine Period Constants
+//   DEFAULT_QUARANTINE_PERIOD: This is the default number of days that
+//     quarantined mail will be stored.
+//     ** This value should not exceed the system max quarantine period **
+//
+//   MAX_QUARANTINE_PERIOD: OBSOLETE
+//     This constant is obsolete and can be removed from the config.ini.
+//     The max quarantine period is now set to the highest quarantine
+//     period supported by an available quarantine db as configured 
+//     in the director db.
+//     
+//   QUARANTINE_SWITCH_BUFFER_HOURS: The minimum number of hours needed between
+//     the current time and midnight if a domain's quarantine database is to
+//     be switched for the current day.  Otherwise, the switch is effective at
+//     midnight the following day.
+// --------------------------------------------------------------------------
+define('DEFAULT_QUARANTINE_PERIOD', 7);
+define('MAX_QUARANTINE_PERIOD', 14);
+define('QUARANTINE_SWITCH_BUFFER_HOURS', 4);
+
+// --------------------------------------------------------------------------
+// User Alias Constants
+//   DEFAULT_USER_ALIASES: This is the default number of aliases allowed per
+//     user if no value is specified for the domain.
+//   MAX_USER_ALIASES: This is the maximum number of aliases allowed per
+//     user.
+// --------------------------------------------------------------------------
+define('DEFAULT_USER_ALIASES', 5);
+define('MAX_USER_ALIASES', 10);
+
+// --------------------------------------------------------------------------
+// Constants associated with the hash-based login facility.
+// Note there are two variations of hash-based login.  One is used
+// in the spam quarantine report email messages, user alias authorization email
+// messages, and password reset email messages that are sent to users. The other
+// is used by customers to integrate portal web pages into their own web sites.
+// --------------------------------------------------------------------------
+//
+// MXL_SSR_SECRET_KEY - Spam Quarantine Report Hash Login Secret Key
+// MXL_SSR_OLD_SECRET_KEY - Prior Secret Key from Spam Quarantine Report
+// MXL_SSR_OLD_SECRET_KEY_EXPIRE_DATE - Date on which the Old Secret
+//   Key expires (at 12AM).  DATE FORMAT: MM/DD/YYYY
+//
+// DESIGN NOTE: When a user accesses the portal via the spam quarantine report,
+//   the hash is first verified using the MXL_SSR_SECRET_KEY.  If this fails,
+//   and there is an MXL_SSR_OLD_SECRET_KEY which has not yet expired, this one
+//   is tried. When changing MXL_SSR_SECRET_KEY, MXL_SSR_OLD_SECRET_KEY
+//   should be updated with the prior value of MXL_SSR_SECRET_KEY, and
+//   MXL_SSR_OLD_SECRET_KEY_EXPIRE_DATE should be updated to some time in the
+//   future, so that users can continue to log in from their spam quarantine
+//   reports (etc.) for a certain amount of time.
+
+define('MXL_SSR_SECRET_KEY','SSR-DEFAULT-SKEY');
+define('MXL_SSR_OLD_SECRET_KEY','SSR-DEFAULT-SKEY');
+define('MXL_SSR_OLD_SECRET_KEY_EXPIRE_DATE','06/01/2004'); // Format: MM/DD/YYYY
+define('MXL_SSR_DEFAULT_ADDITIONAL_TEXT','INDEX');
+
+//
+// LEGACY_SSR_HASH_EXPIRE_DATE:  This variable defines the date
+//    after which spam quarantine report hash logins containing no timestamp
+//    will not be accepted.  This is to provide backwards compatibility upon
+//    the introduction of the timestamp into the login hash, and
+//    should be removed at some point in the near future.  It is recommended
+//    that the date be set to 2 weeks from the time the constant is introduced.
+//    DATE FORMAT: MM/DD/YYYY
+
+define('LEGACY_SSR_HASH_EXPIRE_DATE', '10/01/2004');
+
+
+// SQR_HASH_TTL_SECS - spam quarrantine report link hash time to live in seconds.
+// NOTE: The time to live determines how long the hash will be valid.
+// Clients using this feature need to be aware of this and changing the TTL
+// setting will affect clients using the facility.
+
+define('SQR_HASH_TTL_SECS',3 * 24 * 3600);  // 3 days
+
+
+// PWD_HASH_TTL_SECS: The set password email hash link time to live in seconds.
+// This setting determines how long the hash link contained in the
+// 'forgotten password' email is valid.
+
+define('PWD_HASH_TTL_SECS', 3600);
+
+//
+// ALIAS_HASH_TTL_SECS: The user alias confirmation email hash link time to
+// live in seconds.  This setting determines how long the hash link contained in the
+// 'user alias confirmation' email is valid.
+
+define('ALIAS_HASH_TTL_SECS', 7200);
+
+
+// LOGIN_HASH_TTL_SECS - login hash time to live in seconds.
+// NOTE: The time to live determines how long the hash will be valid.
+// Clients using this feature need to be aware of this and changing the TTL
+// setting will affect clients using the facility.
+
+define('LOGIN_HASH_TTL_SECS',3600);
+
+// --------------------------------------------------------------------------
+// Remote LDAP/POP/IMAP Authentication Configuration Constants 
+// --------------------------------------------------------------------------
+
+// REMOTE_AUTH_PASSWORD_EXPIRE_SECS sets the amount of time that a locally 
+// stored password can be used for authentication before requiring 
+// authentication against the remote authentication source.  Note that if 
+// local authentication of a user's password fails, remote authentication 
+// will always be attempted regardless of whether or not the locally stored
+// password has expired or not in case the user changed their password in the 
+// remote authentication source.  Upon successful remote authentication, 
+// the locally stored password and last password update timestamp are updated.
+define('REMOTE_AUTH_PASSWORD_EXPIRE_SECS', 60 * 60 * 4);
+
+// REMOTE_AUTH_BACKOFF_FAILURE_THRESHOLD sets the number of consecutive 
+// remote authentication source connection failures that must occur before 
+// invoking a backoff mechanism that throttles down connection attempts to 
+// the remote authentication source. 
+define('REMOTE_AUTH_BACKOFF_FAILURE_THRESHOLD', 10);
+
+// REMOTE_AUTH_CONNECT_TIMEOUT_SECS sets the timeout for connecting to a
+// remote authentication source.
+define('REMOTE_AUTH_CONNECT_TIMEOUT_SECS', 15);
+
+// --------------------------------------------------------------------------
+// Debug Constants
+// --------------------------------------------------------------------------
+
+define('LOGIN_HASH_DEBUG',true);  // Debug flag: true | false
+
+define('DEBUG_CLIENT',     0);    // bits: 0=none; 1=notice; 2=warning; 4=error;
+define('DEBUG_SERVER',     0);
+
+// --------------------------------------------------------------------------
+// External Include File URLs
+// --------------------------------------------------------------------------
+// The News Updates and What's New content areas can be turned on/off at
+// the system level using the following constants.
+// true - display content | false - don't display content
+// If either or both are turned on, then the associated include file
+// URLs must point to include files that exist that contain the content
+// to display in the content areas.
+//
+define('MXL_DISPLAY_NEWS_UPDATES', true);
+define('MXL_NEWS_INC', 'http://208.65.150.133/includes/news.inc');             // Non-private branding news URL.
+define('MXL_PRIVATE_NEWS_INC', 'http://208.65.150.133/includes/private_news.inc');     // private branding news URL.
+
+define('MXL_DISPLAY_WHATS_NEW', true);
+define('MXL_WHATSNEW_INC', 'http://208.65.150.133/includes/whatsnew.inc');         // Non-private branding what's new URL.
+define('MXL_PRIVATE_WHATSNEW_INC', 'http://208.65.150.133/includes/private_whatsnew.inc'); // private branding what's new URL.
+
+// If the privacy statement include file URL is empty, then the privacy
+// link in the page footer will not be displayed.
+// If it is not empty, then it needs to be a valid URL to a privacy
+// statement HTML page.  Note that you can set locale-specific privacy
+// statement URL constants for different languages.  See the top of this
+// file for more info.
+define('MXL_PRIVACY_INC', 'http://www.mxlogic.com/includes/privacy.cfm'); // Privacy statement URL.
+
+// --------------------------------------------------------------------------
+// SPAM REPORT VARIABLES
+//
+//   SPAM_HEADER_FROM: Default <From:> address in user spam report message
+//         (Can be overridden by value in mxl_key_opts)
+//   SPAM_MAX_MSGS: Maximum number of quarantined messages to include in
+//         spam report message
+//   SPAM_PORTAL_SERVER: Name of the default portal server to link to
+//         for actions on spam messages; Can be overridden by values in
+//         mxl_brand_url table
+//   SPAM_OUTLOOK_DWNLD_URL: URL for the Spam Control for Outlook plugin
+//         download.  (To be displayed in the Spam Quarantine report)
+//   SPAM_OUTLOOK_DWNLD_MSG: Message to display in the Spam Quarantine report
+//         about Spam Control for Outlook
+//   SPAM_SUPPRESS_OUTLOOK_DWNLD: Constant to allow the suppression of the
+//         Spam Control for Outlook reporting option on the Spam Reporting
+//         policy configuration page.  true (suppress) | false (display)
+//   SPAM_XHEADER_ENABLED: Constant to allow the user to configure their own
+//         customer SMTP x-header (i.e. X-Name: value).
+//   SPAM_BMI_XHEADER_ENABLED: Constant to allow the user to take advantage
+//         of the BMI feature to automatically deliver known spam to a local
+//         folder on the client MUA.
+//   SPAM_REPORT_ONDEMAND_URL: Constant to give the exact path to the
+//         spam_report.php script. 'Deliver Spam Report' functionality
+//         requires this information.
+// --------------------------------------------------------------------------
+define('SPAM_HEADER_FROM', "ucereport@mxlogic.com");
+define('SPAM_MAX_MSGS', 400);
+define('SPAM_PORTAL_SERVER', 'portal.mxlogic.com');
+define('SPAM_OUTLOOK_DWNLD_URL', "http://www.mxlogic.com/services/spam_blocking/spam_control.html");
+define('SPAM_REPORT_ONDEMAND_URL','http://127.0.0.1/spam_reports/spam_report.php');
+define('SPAM_XHEADER_ENABLED', false);
+define('SPAM_BMI_XHEADER_ENABLED', false);
+
+define('SPAM_SUPPRESS_OUTLOOK_DWNLD', false);
+
+define('SPAM_OUTLOOK_DWNLD_MSG', 'return _L("Announcing \"Spam Control for Outlook&#174\" - a seamless integration with MS Outlook&#174 that provides one-click deletion and effortless reporting of spam messages to our Threat Center for analysis by email security experts.")');
+
+// --------------------------------------------------------------------------
+// MXL_MAX_GLOBAL_DENY_ENTRIES: Maximum number of entries that can be added
+//  to the Global Denied Sender list
+// MXL_MAX_RECIP_DENY_ENTRIES: Maximum number of entries that can be added
+//  to a domain's Recipient Deny list.
+// MXL_MAX_DOMAIN_ALLOW_ENTRIES: Maximum number of entries that can be added
+//  to a domain's Allowed Sender list.
+// MXL_MAX_DOMAIN_DENY_ENTRIES: Maximum number of entries that can be added
+//  to a domain's Denied Sender list.
+// ADMIN_LIMIT_FOR_USER_LIST_ENTRIES: Maximum number of entries that can be added
+// to a user's Allowed Sender List or Denied Sender List by an admin.
+// MXL_MAX_USER_ALLOW_ENTRIES: Maximum number of entries that can be added
+//  to a user's Allowed Sender list.
+// MXL_MAX_USER_DENY_ENTRIES: Maximum number of entries that can be added
+//  to a user's Denied Sender list.
+// MXL_MAX_CLICK_PROTECT_ENTRIES: Maximum number of entries that can be added
+//  to a domain's Click Protect list.
+// MXL_MAX_PUBLIC_DOMAINS_PER_DOMAIN: Maximum number of public domains that can
+//  be created for a primary domain (must be <= 5).
+// --------------------------------------------------------------------------
+define('MXL_MAX_GLOBAL_DENY_ENTRIES',       1000);
+define('MXL_MAX_RECIP_DENY_ENTRIES',        1000);
+define('MXL_MAX_DOMAIN_ALLOW_ENTRIES',      1000);
+define('MXL_MAX_DOMAIN_DENY_ENTRIES',       1000);
+define('ADMIN_LIMIT_FOR_USER_LIST_ENTRIES', 1000);
+define('MXL_MAX_USER_ALLOW_ENTRIES',         300);
+define('MXL_MAX_USER_DENY_ENTRIES',          200);
+define('MXL_MAX_CLICK_PROTECT_ENTRIES',      200);
+define('MXL_MAX_PUBLIC_DOMAINS_PER_DOMAIN',    5);
+
+// --------------------------------------------------------------------------
+//  MXL_MAX_DROPDOWN_DOMAINS - the maximum number of domains that will
+//    appear in the domain selection dropdown list that appears at the top
+//    of many of the MXL Control Console pages for users whose role
+//    is customer admin or higher.  If the number of domains
+//    to be displayed in the list exceeds the limit, a text search box
+//    will appear instead.
+//
+//    In addition, this constant also controls whether or not the
+//    overview page contains stats for the active customer account or
+//    active domain.
+// --------------------------------------------------------------------------
+define('MXL_MAX_DROPDOWN_DOMAINS', 1000);
+
+// --------------------------------------------------------------------------
+//  MXL_SEARCH_RESULTS_LIMIT - Sets the limit on the number of entries that will
+//  appear in the global search select list.
+// --------------------------------------------------------------------------
+define('MXL_SEARCH_RESULTS_LIMIT', 10);
+
+// --------------------------------------------------------------------------
+//  MXL_GROUP_SELECT_LIMIT - the maximum number of user entries that will
+//    display for a selected group on the user group management page.
+//    If the number of results for user list query exceeds the limit,
+//    the list will be truncated to the limit and the user will be informed that the entire list is
+//    not being displayed.
+// --------------------------------------------------------------------------
+define('MXL_GROUP_SELECT_LIMIT', 1000);
+
+// --------------------------------------------------------------------------
+//  MXL_USER_DELETE_SELECT_LIMIT - the maximum number of users that will
+//    display for a selected filter in the Delete Users page.
+//    If the number of results for user select query exceeds the limit,
+//    the list will be truncated and the user will be informed.
+// --------------------------------------------------------------------------
+define('MXL_USER_DELETE_SELECT_LIMIT', 1000);
+
+// --------------------------------------------------------------------------
+//  MXL_SAPI_DOMAIN_LIST_LIMIT - the maximum number of domains that will
+//    listed for a list limit in any SAPI_domain or SAPI_domain_alias
+//    call.
+//    If the number of results for domain lists exceeds the limit,
+//    the list will be truncated and the user will be informed.
+// --------------------------------------------------------------------------
+define('MXL_SAPI_DOMAIN_LIST_LIMIT', 1000);
+
+
+// --------------------------------------------------------------------------
+//  MXL_BATCH_USER_DELETE_LIMIT - the maximum number of users that can be deleted
+//    at one time on the Delete Users page.
+// --------------------------------------------------------------------------
+define('MXL_BATCH_USER_DELETE_LIMIT', 100);
+
+// --------------------------------------------------------------------------
+// MTA mod-arbomb config settings. These constants are
+// NOTE: These constants must be kept in sync with the same constants that
+// are maintained in the MTA config file since there currently is no way
+// to share them between the MTA and the portal.
+// --------------------------------------------------------------------------
+define('MXL_ARBOMB_MAX_DEPTH', 3);
+define('MXL_ARBOMB_MAX_COMPRESSION_RATIO', 95);
+define('MXL_ARBOMB_MAX_FILES', 1500);
+define('MXL_ARBOMB_MAX_FILE_SIZE_MB', 100);
+define('MXL_ARBOMB_MAX_ZIP_SIZE_MB', 500);
+
+// --------------------------------------------------------------------------
+// DB TIMING CONSTANTS
+// These constants control logging of db query execution times.
+//
+// MXL_DB_TIMING: Enables (true) or disables (false) timing of sql queries. 
+//
+// MXL_DB_TIMING_THRESHOLD_SECS: Only queries whose execution time
+// exceeds this threshold in seconds will be logged.
+//
+// MXL_DB_TIMING_LOG_DIR: directory of where to write the timing log files.
+//
+// DB timing log file name: mxl_db_timing.log.[YYYYMMDD]
+//
+// MXL_DB_TIMING_TRACE: Enables (true) or disables (false) trace output for each
+// query that is logged to the timing log making it much easier to track down 
+// where the query came from in the code. This constant is applicable only 
+// when MXL_DB_TIMING is true.
+//
+// PLEASE NOTE: The directory where the log file is to be written must
+// already exist and apache must have permission to write to it.
+// --------------------------------------------------------------------------
+
+define('MXL_DB_TIMING', true);
+define('MXL_DB_TIMING_THRESHOLD_SECS', 10);
+define('MXL_DB_TIMING_LOG_DIR', '/var/log/mxl');
+define('MXL_DB_TIMING_TRACE', false);
+
+// --------------------------------------------------------------------------
+// MX CONTROL CONSOLE PHP SCRIPT TIMING CONTROL CONSTANTS 
+// These constants control logging of MX Control Console php script
+// execution times.
+//
+// PHP_TIMING: true (enable timing log) | false (disable timing log - default)
+//
+// PHP_TIMING_LOG_FILE: Base name including path of the log file.  
+// A date stamp extension is appended to the base name in the format 
+// ".[YYYYMMDD]" so that the log file will roll daily.
+//
+// PHP_TIMING_THRESHOLD_SEC: Timing entries are logged only for scripts 
+// whose execution time exceeds this threshold in seconds.
+//
+// PLEASE NOTE: The directory where the log file is to be written must
+// already exist and apache must have permission to write to it.
+// --------------------------------------------------------------------------
+
+define('PHP_TIMING', false);
+define('PHP_TIMING_LOG_FILE',  '/var/log/mxl/mxl_php_timing.log');
+define('PHP_TIMING_THRESHOLD_SEC', 5);
+
+// ************************************************************************
+// ** MISC CUSTOMIZABLE CONSTANTS **
+// ************************************************************************
+
+// MXL_SERVICE_LANG_FILTER_ENABLED
+// Determines whether to show the 'Language' tab in policies.
+define('MXL_SERVICE_LANG_FILTER_ENABLED', false);
+
+// MXL_SAFE_VIEW_MSG_CONTENT_DISABLED_TEXT:
+// Defines the text that is displayed in the safe message view page when the
+// spam reporting option "Do not display message content in Safe Message View"
+// is enabled.
+//
+define('MXL_SAFE_VIEW_MSG_CONTENT_DISABLED_TEXT',
+       'return _L("Viewing of message body content in Safe Message View has been disabled by domain policy.")');
+
+// ENABLE_SP2ENT_SELF_CONVERSION
+// Determines whether or not a customer admin or higher has the ability to
+// self-initiate the conversion of a customer account from
+// service provider to enterprise via a workflow initiated
+// by clicking a promotional link displayed on the Domain Policies page.
+
+define('ENABLE_SP2ENT_SELF_CONVERSION', true);
+
+// ************************************************************************
+// g_illegal_smtp_in_ips_cidr
+// Array of illegal customer inbound smtp server IP ranges in CIDR notation.
+// Any IP or hostname entered into the MX Control Console Inbound SMTP Server
+// config page that resolves to an IP that falls within one of these ranges will
+// be rejected.  See [RFC 3330] for more information.
+// ************************************************************************
+global $g_illegal_smtp_in_ips_cidr;
+$g_illegal_smtp_in_ips_cidr = array (
+	'127.0.0.0/8',		// Loopback  [RFC1700, page 5]
+
+	'10.0.0.0/8',		// Private-Use Networks  [RFC1918]
+	'172.16.0.0/12',	// Private-Use Networks  [RFC1918]
+	'192.168.0.0/16',	// Private-Use Networks  [RFC1918]
+
+	// draft-manning-dsua-03.txt nets
+	'0.0.0.0/8',		// "This" Network  [RFC1700, page 4]
+	'169.254.0.0/16',	// Link Local, used by hosts that support autoconfiguration in case no DHCP server can be found.
+
+	'192.0.2.0/24',		// Test-Net, for use in documentation together with 'example.com' and 'example.net'
+	'224.0.0.0/4',		// Multicast  [RFC3171]
+	'240.0.0.0/4',		// Reserved for Future Use  [RFC1700, page 4]
+
+	'192.88.99.0/24',	// 6to4 Relay Anycast  [RFC3068]
+
+	'198.18.0.0/15',	// Network Interconnect Device Benchmark Testing  [RFC2544]
+
+	'208.65.144.0/21',	// MX Logic
+	'208.81.64.0/22',	// MX Logic
+);
+
+// ************************************************************************
+// g_illegal_smtp_out_ips_cidr
+// Array of illegal customer outbound smtp server IP ranges in CIDR notation.
+// Any IP range entered into the MX Control Console Outbound SMTP Server
+// config page that overlaps one of these ranges will be rejected.  See
+// [RFC 3330] for more information.
+// ************************************************************************
+global $g_illegal_smtp_out_ips_cidr;
+$g_illegal_smtp_out_ips_cidr = array (
+	'127.0.0.0/8',		// Loopback  [RFC1700, page 5]
+
+	'10.0.0.0/8',		// Private-Use Networks  [RFC1918]
+	'172.16.0.0/12',	// Private-Use Networks  [RFC1918]
+	'192.168.0.0/16',	// Private-Use Networks  [RFC1918]
+
+	// draft-manning-dsua-03.txt nets
+	'0.0.0.0/8',		// "This" Network  [RFC1700, page 4]
+	'169.254.0.0/16',	// Link Local, used by hosts that support autoconfiguration in case no DHCP server can be found.
+
+	'192.0.2.0/24',		// Test-Net, for use in documentation together with 'example.com' and 'example.net'
+	'224.0.0.0/4',		// Multicast  [RFC3171]
+	'240.0.0.0/4',		// Reserved for Future Use  [RFC1700, page 4]
+
+	'192.88.99.0/24',	// 6to4 Relay Anycast  [RFC3068]
+
+	'198.18.0.0/15',	// Network Interconnect Device Benchmark Testing  [RFC2544]
+
+	'208.65.144.0/21',	// MX Logic
+	'208.81.64.0/22',	// MX Logic
+);
+
+// ************************************************************************
+// g_illegal_wds_src_ips_cidr
+// Array of illegal customer WDS server IP ranges in CIDR notation.
+// Any IP range entered into the MX Control Console WDS Organization
+// Source IP Ranges config page that overlaps one of these ranges will
+// be rejected.
+// ************************************************************************
+global $g_illegal_wds_src_ips_cidr;
+$g_illegal_wds_src_ips_cidr = array (
+	'127.0.0.0/8',		// Loopback  [RFC1700, page 5]
+
+	'10.0.0.0/8',		// Private-Use Networks  [RFC1918]
+	'172.16.0.0/12',	// Private-Use Networks  [RFC1918]
+	'192.168.0.0/16',	// Private-Use Networks  [RFC1918]
+
+	// draft-manning-dsua-03.txt nets
+	'0.0.0.0/8',		// "This" Network  [RFC1700, page 4]
+	'169.254.0.0/16',	// Link Local, used by hosts that support autoconfiguration in case no DHCP server can be found.
+
+	'192.0.2.0/24',		// Test-Net, for use in documentation together with 'example.com' and 'example.net'
+	'224.0.0.0/4',		// Multicast  [RFC3171]
+	'240.0.0.0/4',		// Reserved for Future Use  [RFC1700, page 4]
+
+	'192.88.99.0/24',	// 6to4 Relay Anycast  [RFC3068]
+
+	'198.18.0.0/15',	// Network Interconnect Device Benchmark Testing  [RFC2544]
+
+	'208.65.144.0/21',	// MX Logic
+	'208.81.64.0/22',	// MX Logic
+);
+
+// ************************************************************************
+// mxl_service_keys
+// If it is necessary to have a slow rollout of a new service and the
+// service can be controlled via package aware settings in
+// mxl_pkg_def, then at launch, the service must be excluded from all
+// packages via package aware settings in the mxl_pkg_def table in mxl db.
+//
+// Make an entry in the mxl_service_keys array below to define an arbitrary
+// key for the service.  To enable the service for a specific customer,
+// enter the key into the "Note 2" optional field in the edit customer form
+// under manage customers.  Note 2 may include other information.  As long
+// as the key exists somewhere in the note value, it will work. This will
+// allow the customer to use the new service.  When it is decided to make
+// the service generally available, update the package aware flag in all
+// appropriate packages to include the service.
+//
+// Array structure: service_id => key
+// Sample Entry for ClickProtect: 'Cp' => '1234221334',
+//
+// NOTE: The service_id must match one of the MXL_EDS_SERVICE_xxxx constants
+// in common.php.
+// ************************************************************************
+$mxl_service_keys  = array (
+);
+
+// ************************************************************************
+// MX Record Analysis Support
+//
+// If the constant ENABLE_MX_REC_ANALYSIS is set to true, a subnav link
+// named "MX Records" will appear under Setup in the MX Control Console.
+// The link leads to a page that allows an admin to perform an analysis
+// of the MX records for their domain to determine if they are properly
+// configured and provides information concerning MX record setup and
+// optionally customer mta lockdown instructions (see below).
+//
+// In order for the analysis to function properly, the $recMXArray,
+// $validMXArray, and $deprecatedMXArray arrays must be configured as
+// described below.
+//
+// Domain Keyword Substitution:
+// In each MX record array, the keyword $(DOMAIN) may be placed in the
+// hostnames entered in the MX record arrays.  This keyword will be replaced
+// with the domain the user is analyzing prior to performing the analysis.
+// This allows the domain to be dynamically inserted into the MX record
+// hostnames as required.
+//
+// Wildcards (*):
+// A '*' wildcard can be used in the hostnames entered in the MX arrays
+// except for the $recMXArray. A wildcard will match a string of 0 or
+// more characters up to the next explicit character or the end of the hostname.
+//
+//
+// Server Name Arrays
+//
+// $recMXArray:
+//   Array of hostnames that resolve to Email Defense Gateway inbound mail
+//   servers that are currently recommended for use in customer MX records.
+//
+// $recOutboundServersArray:
+//   Array of hostnames that resolve to outbound mail servers that are
+//   currently recommended for use in the outbound mail server setup.
+//
+//   If you want to include a recommended preference value for an entry in
+//   these arrays, append it to the end of entry using a colon as the separator
+//   e.g. '$(DOMAIN).inbound10.mxlogic.net:10'.  If a recommended preference is
+//   not included, one will be generated automatically without regard for
+//   preference values explicitly set here.  Therefore, it is recommended that
+//   you either explicitly set recommended preference values for all entries in
+//   the array or none at all.
+//
+//   IMPORTANT NOTES
+//   1: Do not use wildcards (*) in these server names. It is acceptable to
+//      use the domain keyword $(DOMAIN).
+//   2: Recommended preference values are not checked during MX record analysis.
+//      They are simply displayed as the recommended values.
+//   3: Recommended preference values are used ONLY for the $recMXArray entries,
+//      not the $recOutboundServersArray entries.
+//
+//     Samples:
+//     $recMXArray  = array (
+//       '$(DOMAIN).inbound10.mxlogic.net:10',
+//       '$(DOMAIN).inbound20.mxlogic.net:20',
+//       '$(DOMAIN).inbound30.mxlogic.net:30',
+//     );
+//
+//     $recOutboundServersArray  = array (
+//       '$(DOMAIN).outbound10.mxlogic.net',
+//       '$(DOMAIN).outbound20.mxlogic.net',
+//       '$(DOMAIN).outbound30.mxlogic.net',
+//     );
+//
+// $validMXArray:
+//   Array of hostnames that resolve to Email Defense Gateway inbound mail
+//   servers that are currently considered valid for use in customer MX records.
+//   It is acceptable to use wildcards (*) and domain keywords in the hostnames
+//   entered in this array.  
+//
+//     Sample:
+//     $validMXArray  = array (
+//       '$(DOMAIN).inbound10.mxlogic.net',
+//       '$(DOMAIN).inbound20.mxlogic.net',
+//       '$(DOMAIN).inbound30.mxlogic.net',
+//     );
+//
+// $deprecatedMXArray:
+//   Array of deprecated hostnames that still resolve to Email Defense Gateway
+//   inbound mail servers but are no longer recommended for use in
+//   customer MX records.  It is acceptable to use wildcards (*) and domain keywords
+//   in the hostnames entered in this array.
+//
+//     Sample:
+//     $deprecatedMXArray  = array (
+//       '*inbound*.mxlogic.net',
+//     );
+//
+// $edgMtaSubnetsCidrArray:
+//   In order to ensure that customer mail servers do not receive SMTP
+//   traffic that has not gone through Email Defense Gateway filtering,
+//   it is generally recommended that customers only accept SMTP traffic
+//   from EDG mail servers.  The $edgMtaSubnetsCidrArray is an array that
+//   must contain an accurate list of subnets in cidr notation that host
+//   EDG mail servers.  If this array exists and contains at least one entry,
+//   then a recommendation will be made in the help content on the MX record
+//   analysis page for customers to lock down their inbound mail servers to
+//   only accept mail from mail servers whose IP falls in one of the listed
+//   ranges.  To suppress this help content, comment out the array or leave
+//   it empty.
+//
+//   PLEASE NOTE: The MX Control Console sends email messages also.  Therefore,
+//   the IPs of the servers hosting the MX Control Console need to be included
+//   in the IP ranges specified in the $edgMtaSubnetsCidrArray.
+//
+//     Sample:
+//     $edgMtaSubnetsCidrArray  = array (
+//       '66.179.109.160/27',
+//       '216.173.230.160/27',
+//       '216.183.119.96/27',
+//     );
+//
+// ************************************************************************
+
+define('ENABLE_MX_REC_ANALYSIS', true);
+
+$recMXArray  = array (
+'$(DOMAIN).inbound10.mxlogic.net:10',
+'$(DOMAIN).inbound10.mxlogicmx.net:10',
+);
+
+$recOutboundServersArray = array (
+'$(DOMAIN).outbound10.mxlogic.net',
+'$(DOMAIN).outbound10.mxlogicmx.net',
+);
+
+$validMXArray  = array (
+'$(DOMAIN).inbound10.mxlogic.net',
+'$(DOMAIN).inbound10.mxlogicmx.net',
+);
+
+$deprecatedMXArray  = array (
+'$(DOMAIN).inbound*.mxlogic.net',
+'$(DOMAIN).inbound*.mxlogicmx.net',
+);
+
+$edgMtaSubnetsCidrArray  = array (
+	'  ',
+	'      Use One of the Approved Settings',
+	'  ',
+	'        Preferred Firewall IP Setting',
+	'  ',
+	'              208.65.144.0/21',
+	'              208.81.64.0/22',
+	'  ',
+	'           Alternate IP Settings',
+	'         Include All Listed Subnets',
+	'  ',
+	'              208.65.144.0/24',
+	'              208.65.145.0/24',
+	'              208.65.146.0/24',
+	'              208.65.147.0/24',
+	'              208.65.148.0/24',
+	'              208.65.149.0/24',
+	'              208.65.150.0/24',
+	'              208.65.151.0/24',
+	'              208.81.64.0/24',
+	'              208.81.65.0/24',
+	'              208.81.66.0/24',
+	'              208.81.67.0/24',
+	'  ',
+	'  ',
+	'         Prior Firewall IPs Settings',
+	'       Have Been Removed From Service',
+	'  ',
+	'              216.173.230.160/27',
+	'               66.179.109.160/27',
+	'              216.183.119.96/27',
+	'               66.179.26.128/26',
+	'               64.92.205.64/27',
+);
+
+// ************************************************************************
+// Failsafe Constants
+//
+// FAILSAFE_SUPPORT declares whether or not Failsafe has been deployed
+// in this system installation. If set to true, Failsafe has been
+// deployed and may be included/excluded from an inbound package via
+// the Failsafe package service flag (Fs=Y|N) in the services column
+// of the mxl_pkg_def table.  If set to false, Failsafe has not been
+// deployed and no Failsafe related content will be displayed in the
+// MX Control Console.
+//
+// FS_MAX_NOTIFY_RECIPIENTS defines the maximum number of entries allowed
+// in the Failsafe Notifications recipient list.
+//
+// FS_STATUS_POLL_INTERVAL_SECS defines the interval in seconds that the
+// Failsafe configuration page automatically refreshes the displayed
+// status information.  Set to 0 to turn off auto-refresh.
+//
+// FS_EVENT_LOG_MAX_AGE defines the maximum number of days of Event Log
+//  data that can be retrieved on the Failsafe Event Log report page; to
+//  make unlimited, set to -1
+// ************************************************************************
+define('FAILSAFE_SUPPORT',               true);
+define('FS_EVENT_LOG_MAX_AGE',              60);
+
+define('FS_MAX_NOTIFY_RECIPIENTS',           4);
+define('FS_STATUS_POLL_INTERVAL_SECS',      60);
+
+// ************************************************************************
+// Service Activation Constants
+// These constants are associated with enabling mxl admin access to the
+// administration pages of the Service Activation web site that is part
+// of the MX Logic Online Store.  These constants are not required in
+// on-premise installations.
+//
+// SHOW_ACTIVATION: true (display activation subnav link | false (don't show)
+// Setting this constant to true causes the 'Upload New License File' link
+// to appear on the Overview page, and the View Customer page, if the current
+// reseller ID matches the ACTIVATION_RESELLER_ID defined below.  This link
+// will take the Admin to the Activation site to upload a new license file
+// for the current customer.
+//
+// ACTIVATION_LOGINHASH_SKEY - DON'T USE DEFAULT VALUE, PLEASE UPDATE:
+// The md5-based hash login authentication scheme is used to authenticate
+// admins accessing the activation administration page from the portal.
+// The secret key used to build the hash is set by ACTIVATION_LOGINHASH_SKEY
+// and can be any arbitrary string.  The default should not be used.
+//
+// ACTIVATION_WEB_PATH:
+// URL to the activation site document root directory.
+//
+// ACTIVATION_RESELLER_ID:
+// Reseller ID for Symantec Activation reseller.  **Must be defined if
+// SHOW_ACTIVATION is set to true.**
+//
+// ************************************************************************
+define('SHOW_ACTIVATION', false);
+define('ACTIVATION_LOGINHASH_SKEY', 'DEFAULT-ACTIVATION-SKEY');
+define('ACTIVATION_WEB_PATH', 'http://activation.mxlogic.com');
+define('ACTIVATION_RESELLER_ID', 0);
+
+// ************************************************************************
+// ** Web Defense Constants **
+// ************************************************************************
+define('ENABLE_WDS',          true); // Enables/disables WDS Product in UI. Defaults to false when undefined.
+define('ENABLE_WDS_FEEDBACK', false); // Enables/disables WDS Feedback Page. Defaults to false when undefined.
+
+// DISPLAY_WDS_TROJANS - enables/disables reporting of Spyware Trojans 
+// in WDS Threat reports. Defaults to true when undefined.  This constant
+// should be set to true only when the Kaspersky A/V engine is being used
+// as the WDS anti-virus engine.
+define('DISPLAY_WDS_TROJANS', true);
+
+// WDS_SHORT_RETENTION_INTERVAL_WEEKS dictates the reporting window available in the portal and 
+// *MUST* stay in synchronization with the setting used in WDS DB maint. scripts, so that detail
+// data is available for reports.
+define('WDS_SHORT_RETENTION_INTERVAL_WEEKS', 1); // # of weeks short-lived WDS logs are retained
+// ************************************************************************
+// ** Product Cross Selling Constants **
+// ************************************************************************
+define('ENABLE_CROSS_SELL', false);         // Enables/disables product cross selling. Defaults to false when undefined.
+define('DEFAULT_EDS_PRODUCT_INFO_URL', ''); // Default EDS production information URL. Defaults to none when undefined.
+define('DEFAULT_WDS_PRODUCT_INFO_URL', ''); // Default WDS production information URL. Defaults to none when undefined.
+
+// ************************************************************************
+// Number of Domain Constants
+// ************************************************************************
+// In order to convert a customer from enterprise to service provider,
+// the customer must have less than PSET_ENT2SP_DOMAIN_LIMIT domains.
+// The limit is intended to try to avoid script timeouts that may result
+// in partial conversions.
+if (!defined('PSET_ENT2SP_DOMAIN_LIMIT'))    define('PSET_ENT2SP_DOMAIN_LIMIT',
+40);
+// In order to convert a customer from service provider to enterprise,
+// the customer must have less than PSET_SP2ENT_DOMAIN_LIMIT domains.
+// The limit is intended to try to prevent inappropriate conversions
+// of customers that shouldn't be enterprise to enterprise.  Allowing
+// this to happen for a customer with lots of domains causes a problem
+// when they need to be switched back.  Besides, in general, an enterprise
+// customer should not have a huge number of domains.
+if (!defined('PSET_SP2ENT_DOMAIN_LIMIT'))    define('PSET_SP2ENT_DOMAIN_LIMIT',
+40);
+
+// ************************************************************************
+// ** SAPI/DAPI Constants **
+// ************************************************************************
+// Trace output of SAPI/DAPI exceptions that are reported to the error
+// log can be enabled by setting TRACE_EXCEPTIONS to true.
+define('TRACE_EXCEPTIONS', false);
+
+// SAPI_CLASS_DEBUG can be set to "all" to enable debug logging for all
+// SAPI classes or can be set to a class name to turn it on
+// only for a specific class.
+define('SAPI_CLASS_DEBUG', '');
+
+// Sets the SAPI debug level: 0 (off) - 5 (max debug output level).
+define('SAPI_DEBUG_LEVEL', 0);
+
+// If you want to redirect debug output to a file other than the
+// standard php error log, set SAPI_DEBUG_LOG_FILE to file name
+// including the full path.  Note that the date will be appended to
+// the file name. Also, the directory must exist with permissions
+// that will allow the web server to write to it.
+define('SAPI_DEBUG_LOG_FILE',  '/var/log/mxl/sapi.debug');
+
+// SAPI_CLASS_TIMING can be set to "all" to enable timing for all
+// SAPI classes or can be set to a class name to turn it on
+// only for a specific class.
+define('SAPI_CLASS_TIMING',  '');
+
+// SAPI_TIMING_LOG_FILE: Base name including path of the log file.  
+// A date stamp extension is appended to the base name in the format 
+// ".[YYYYMMDD]" so that the log file will roll daily.
+//
+// SAPI_TIMING_THRESHOLD_SEC: Timing entries are logged only for sapi methods 
+// whose execution time exceeds this threshold in seconds.
+//
+// PLEASE NOTE: The directory where the log file is to be written must
+// already exist and apache must have permission to write to it.
+define('SAPI_TIMING_LOG_FILE',  '/var/log/mxl/sapi.timing');
+define('SAPI_TIMING_THRESHOLD_SEC', 5);
+
+// XML Response Compact Levels
+//  0: pretty
+//  1: newlines only
+//  2: no white space
+define('SAPI_XML_COMPACT_LEVEL',  0);
+
+define('DAPI_CORE_DIR', APP_ROOT_DIR  . "share/dapi_core/");
+define('DAPI_APP_DIR',  APP_ROOT_DIR  . "dapi/");
+
+// Sets the DAPI debug level: 0 (off) - 5 (max debug output level).
+define('DAPI_DEBUG_LEVEL', 0);
+
+// Sets the DAPI debug log file.
+define('DAPI_DEBUG_LOG_FILE',  '/var/log/mxl/dapi.debug');
+
+// ************************************************************************
+// ** CUSTOMER-SPECIFIC **
+// ************************************************************************
+
+// --------------------------------------------------------------------------
+// LOGIN HASH SECRET KEYS ARRAY - $mxl_loginhash_skeys
+// The $mxl_loginhash_skeys array is a lookup table that relates
+// a client id with the shared secret key used to generate/validate
+// a login hash.  The client id must be unique for each client-side
+// implementation of the portal hash login facility. The client id
+// is an arbitrary string value.
+//
+// The client id can be one of the following:
+//   1. domain name of domain authorized to use hash login
+//   2. domain_id of domain authorized to use hash login
+//   3. customer_id of customer authorized to use hash login
+//   4. reseller_id of reseller authorized to use hash login
+//   5. global client id - arbitrary string which the client includes in the
+//      query string as a key/pair named "cid".
+//      !!!! IMPORTANT NOTE!!!! This type of client id should only be used
+//      in an environment where the client is completely trusted.
+//      This is because the client can access any user account in the
+//      system using a global client id.  In addition,
+//      top level navigation is suppressed when a global client id is used.
+//
+// Array structure: cid -> hash secret key
+// Sample Entry: '123456' => 'This is my secret key!',
+// --------------------------------------------------------------------------
+
+$mxl_loginhash_skeys  = array (
+        );
+
+// --------------------------------------------------------------------------
+// OVERVIEW PAGE CONTROL SETTINGS
+//
+// DEFAULT_DISPLAY_OVERVIEW_STATS:
+// If this constant is set to true, the statistics on the EDS Overview page
+// will always be displayed when the page loads.  If this constant is set to
+// false, the statistics will not be displayed when the Overview page 
+// initially loads and the user will be required to press a "Display Statistics"
+// button to see the statistics. The Overview page will load must faster when 
+// this constant is set to false.  If this constant is not defined in the 
+// config.ini, the value of "true" is assumed.  
+//
+// When DEFAULT_DISPLAY_OVERVIEW_STATS is set to true, statistics can still be 
+// suppressed for customers/domains under selected resellers by populating
+// the $gSuppressOverviewStatsResellerIDs array with the reseller ids of 
+// those resellers. 
+//
+// $gSuppressOverviewStatsResellerIDs is an array of reseller ids of reseller
+// accounts that want to suppress overview stats by default for their users.
+// This array is only used when DEFAULT_DISPLAY_OVERVIEW_STATS is set true.
+//
+// Sample array entries:
+// $gSuppressOverviewStatsResellerIDs = array (
+//            11111
+//          , 22222
+//          , 33333
+//		);
+// 
+// --------------------------------------------------------------------------
+define('DEFAULT_DISPLAY_OVERVIEW_STATS', false);
+
+$gSuppressOverviewStatsResellerIDs = array (
+		);
+
+// --------------------------------------------------------------------------
+// MESSAGE CONTINUITY SETTINGS
+//
+// MESSAGE_CONTINUITY_UI_REQUEST_TIMEOUT_SECS sets the default timeout for 
+// the MX Request object that gets used in the Message Continuity Webmail 
+// client.
+//
+// MESSAGE_CONTINUITY_GRACE_PERIOD_LIMIT_HOURS sets the upper limit for the
+// Message Continuity webmail access grace period policy setting.
+//
+// MESSAGE_CONTINUITY_INDEX sets the host and port to the Message
+// Continuity Index server.
+// 
+// MESSAGE_CONTINUITY_STORE sets the host and port to the Message Continuity
+// Store server.
+// !!! This must be kept in synch with the corresponding key in mc_spool.config !!!
+// --------------------------------------------------------------------------
+define('MESSAGE_CONTINUITY_UI_REQUEST_TIMEOUT_SECS'  , 60);
+define('MESSAGE_CONTINUITY_GRACE_PERIOD_LIMIT_HOURS' , 24);
+define('MESSAGE_CONTINUITY_INDEX'                    , 'host=mis.pod1.director.mxlogic.net port=8992');
+define('MESSAGE_CONTINUITY_STORE'                    , 'host=127.0.0.1 port=8993');
+
+// --------------------------------------------------------------------------
+// SURVEY CONSTANTS
+//
+// SURVEY_SUPPORT:
+// Enables (true) or disables (false) survey support.
+//
+// SURVEY_CONSOLE_HOSTNAME:  
+// Defines the hostname used to access the MX Logic Survey Management Console.
+//
+// SURVEY_WINDOW_TITLE: 
+// Defines the title that appears in the title bar
+// of the popup survey window.
+//
+// SURVEY_SECRET_KEY:
+// Defines the secret key that is used to generate the hash used for hash
+// authentication to private surveys.  The secret key must match what the
+// Survey Management Console expects as defined in the SMC survey_config.ini
+// file.
+// --------------------------------------------------------------------------
+define('SURVEY_SUPPORT'           , false);
+define('SURVEY_CONSOLE_HOSTNAME'  , 'survey.portal.mxlogic.com');
+define('SURVEY_WINDOW_TITLE'      , 'Customer Survey');
+define('SURVEY_SECRET_KEY'        , 'SMC.Hash.Auth.SKey!');
+
+
+// --------------------------------------------------------------------------
+// DIRECTORY SYNCHRONIZATION SETTINGS
+//
+// DIRSYNC_SERVER:
+//     Server name/IP, followed by the port the server listens on. This is the
+// location where the LDAP sync engine is running. The port number must match
+// the listen-port specified in the engine configuration file.
+// 
+// MXL_DIRSYNC_LOG_DIR:
+//     Directory containing the working files created and used by the user
+// synchronization process. PLEASE NOTE: Apache/PHP must have permission to
+// write to this directory. Also, this directory needs to be shared across
+// all web servers.  This requirement *must* be met when running a pool of
+// load balanced portal web servers.
+//
+// DIRSYNC_EXPIRATION_PERIOD_SECS:
+//     A 'paused' user synchronization is defined as any normal break point in the
+// process that would require human interaction. this 'pause' would only happen
+// after a successful submission of user data and a completed review in need of
+// approval/rejection.
+//     This value sets the number of seconds a paused user synchronization will
+// stay active. Once the last updated time of the sync is older than
+// DIRSYNC_EXPIRATION_PERIOD_SECS the user synchronization will be expired due
+// to inactivity.
+//
+// DIRSYNC_COMM_TIMEOUT:
+//    Timeout in seconds that sets the read/write timeout on http connections
+// between SAPI and the dirsync engine when SAPI is requesting a directory
+// synchronization. The User Sync Setup page in the UI also uses this timeout
+// when it submits a request for a test sync to the dirsync engine via SAPI.
+// This timeout is configurable because testing new user sync settings is 
+// performed via a synchronous user sync which could take awhile if a 
+// customer's directory is large and/or slow. If a customer
+// experiences timeouts while testing new User Sync settings, the value of 
+// this constant may need to be increased.
+//
+// DIRSYNC_UI_TIMEOUT:
+//     Timeout, in seconds, that the Directory Sync User Interface will wait for a
+// response from the server before stopping the current action. This is being put
+// in place to give the server more time to process directory sync reviews and 
+// approvals before the UI times out and stops waiting for a response.
+//
+// $gDirSyncTimeoutPeriods:
+//     $gDirSyncTimeoutPeriods is an array of key/value pairs that will map a
+// specific action (a SAPI method) of a synchronization process to a timeout value.
+// If that action is 'in progress' for longer than the specified time it is considered
+// to be in a timeout state. When that happens, the specified synchronization process
+// will be marked as 'timed out' and the client will need to re-submit data for
+// synchronization. The timeout periods are all specified in seconds.
+//
+// ENABLE_USER_SYNC_RESTRICTED_DOMAINS:
+//     When ENABLE_USER_SYNC_RESTRICTED_DOMAINS is set to true, user synchronization
+// will be limited to a per-customer or per-domain basis. The allowed domains and
+// customers can be configured in $gDirSyncAllowedIds.
+//
+// $gDirSyncAllowedIds:
+//     $gDirSyncAllowedIds is an array of customer ids and domain ids
+// that are allowed to access and use directory synchronization
+// functionality. This array is only used when ENABLE_USER_SYNC_RESTRICTED_DOMAINS
+// is set true.
+//
+// Sample array entries:
+// $gDirSyncAllowedIds = array (
+//            11111
+//          , 22222
+//          , 33333
+//		);
+// 
+// --------------------------------------------------------------------------
+define('DIRSYNC_SERVER',    'http://127.0.0.1:9002');
+
+define('MXL_DIRSYNC_LOG_DIR', '/mxl/cache/dirsync');
+
+define('DIRSYNC_EXPIRATION_PERIOD_SECS', (3600 * 8)); // Eight hours (units are seconds)
+
+define('DIRSYNC_COMM_TIMEOUT', 120);		// Communication timeout (units are seconds)
+
+define('DIRSYNC_UI_TIMEOUT', 120);			// UI timeout (units are seconds)
+
+$gDirSyncTimeoutPeriods = array(
+	  'request'  => 600   // Ten minutes (units are seconds)
+	, 'submit'   => 3600  // One hour (units are seconds)
+	, 'review'   => 3600  // One hour (units are seconds)
+	, 'approve'  => 3600  // One hour (units are seconds)
+	, 'reject'   => 300   // Five minutes (units are seconds)
+	);
+
+define('ENABLE_USER_SYNC_RESTRICTED_DOMAINS', false);
+
+$gDirSyncAllowedIds = array();
+
+// --------------------------------------------------------------------------
+// SCHEDULER SETTINGS
+//
+// SCHEDULER_LOG_FILE: Base name including path of the scheduler summary log file.  
+// This log file contains summary information generated by the scheduler when it
+// executes. A date stamp extension is appended to the base name in the format 
+// ".[YYYYMMDD]" so that the log file will roll daily. If this constant
+// is not defined in the config.ini file, it will default to 
+// "/var/log/mxl/scheduler.summary.log".
+//
+// SCHEDULER_DISPATCH_LOG_FILE: Base name including path of the scheduler dispatch log file.  
+// This log file contains the details of each job that is dispatched by the scheduler
+// in pipe-delimited format. The log fields are defined below in the order they appear in the file.
+//
+// - current time
+// - log id
+// - job type (see "Scheduler Job Types" below; also defined in mxl_val_scheduler_job_types table in mxl db)
+// - execution time in seconds required to process the job
+// - job id
+// - id (reseller_id | customer_id | domain_id)
+// - scope (4 - reseller | 3 - customer | 2 - domain)
+// - parent_id (reseller_id | customer_id | domain_id; only populated for certain job types e.g. Monthly MSP Push)
+// - parent_scope (4 - reseller | 3 - customer | 2 - domain; populated only when parent_id is populated)
+// - priority
+// - job scheduled start time
+// - job read time
+// - job created time
+// - result status (0 (pending) | 1 (processing) | 2 (done) | 3 (failed); also defined in mxl_val_scheduler_status table in mxl db)
+// - result message (may be a job type specific result message or an exception message if the job failed due to an exception)
+//
+// A date stamp extension is appended to the base name in the format 
+// ".[YYYYMMDD]" so that the log file will roll daily. If this constant
+// is not defined in the config.ini file, it will default to 
+// "/var/log/mxl/scheduler.dispatch.log".
+//
+// SCHEDULER_ADMIN_EMAIL: Defines the email address of a support admin (or higher)
+// user account that actually exists in the system. The scheduler
+// assumes this identity when it executes. If this constant
+// is not defined in the config.ini file, it will default to admin@system.
+//
+// SCHEDULER_ALLOW_CONCURRENCY_PER_HOST determines if multiple instances of this script are 
+// allowed to run concurrently on the same host (true) or not (false). Allowing multiple 
+// instances of the script to run concurrently could increase throughput on jobs if multiple
+// instances are actually started at the expense of increased load to process the jobs.
+// If this constant is not defined in the config.ini file, it will default to false.
+// NOTE: The value of this constant can be overridden via the "-m" scheduler command line option.
+//
+// SCHEDULER_JOB_TYPES: Restricts the scheduler to only dispatching the listed job types.
+// To not limit the job types dispatched by the scheduler, set the value to null.
+// The value must be a comma separated list of one or more type ids (e.g. -j 2,3 ). 
+// If this constant is not defined in the config.ini file, it will default to null.
+//
+// NOTE: The value of this constant can be overridden via the "-j" scheduler command line option.
+//
+// Scheduler Job Types (also defined in mxl_val_scheduler_job_types table in mxl db):
+//   1 = Automatic User Sync
+//   2 = Weekly Performance Report
+//   3 = Monthly Performance Report
+//   4 = Monthly MSP
+//   5 = Monthly MSP Push
+//   6 = MSP Exception Notification
+//
+// SCHEDULER_MAX_NUM_JOBS: Limits the number of jobs dispatched prior to exiting.
+// For no limit, set the value to null. Be careful when using this option to ensure that the situation 
+// will not arise where the scheduler gets behind and cannot catch up.
+// If this constant is not defined in the config.ini file, it will default to null.
+// NOTE: The value of this constant can be overridden via the "-n" scheduler command line option.
+//
+// SCHEDULER_MAX_EXEC_TIME_SECS: Limits the cumulative execution time spent dispatching 
+// jobs prior to exiting to TIME_LIMIT_SECS seconds. For no limit, set the value to null.
+// Be careful when using this option to ensure that the situation will not arise where the 
+// scheduler gets behind and cannot catch up.
+// If this constant is not defined in the config.ini file, it will default to null.
+// NOTE: The value of this constant can be overridden via the "-t" scheduler command line option.
+// --------------------------------------------------------------------------
+define('SCHEDULER_LOG_FILE',                    '/var/log/mxl/scheduler.summary.log');
+define('SCHEDULER_DISPATCH_LOG_FILE',           '/var/log/mxl/scheduler.dispatch.log');
+define('SCHEDULER_ADMIN_EMAIL',                 'scheduler@system');
+define('SCHEDULER_ALLOW_CONCURRENCY_PER_HOST',  false);
+define('SCHEDULER_JOB_TYPES',                   0);
+define('SCHEDULER_MAX_NUM_JOBS',                null);
+define('SCHEDULER_MAX_EXEC_TIME_SECS',          null);
+
+// --------------------------------------------------------------------------
+// EVENT CHANNEL SETTINGS
+//
+// MOD_EVENT_CHANNEL_LOGFILE: Base name including page of the Log File to which
+// log events are written if the Event Channel is not available.
+// --------------------------------------------------------------------------
+define('MOD_EVENT_CHANNEL_LOGFILE', '/var/log/mxl/portal-ec-events.failed.xml');
+
+// --------------------------------------------------------------------------
+// ARCHIVE PRODUCT SETTINGS
+//
+// ARCHIVE_RETRIEVAL_HTTP:
+//   Connection settings for accessing the Message Archiving Server
+//
+// ARCHIVE_HISTORICAL_MAX_GB_RESELLER_ADMIN: 
+// ARCHIVE_HISTORICAL_MAX_GB_SUPPORT_ADMIN: 
+// ARCHIVE_HISTORICAL_MAX_GB_GLOBAL_ADMIN: 
+//   These determine the absolute limit on historical retention gigabytes of
+// storage space that can be set by an administrator, on a per-role basis.
+// 
+// ENABLE_ARCHIVING:
+//   Turns archiving on and off. If this define is not present at all, it will
+// default to false.
+// 
+// --------------------------------------------------------------------------
+define('ARCHIVE_RETRIEVAL_HTTP', 'host=http://10.1.106.54 port=8998');
+
+define('ARCHIVE_HISTORICAL_MAX_GB_RESELLER_ADMIN',250);
+define('ARCHIVE_HISTORICAL_MAX_GB_SUPPORT_ADMIN',500);
+define('ARCHIVE_HISTORICAL_MAX_GB_GLOBAL_ADMIN',5000);
+
+define('ENABLE_ARCHIVING', true);
+
+// --------------------------------------------------------------------------
+// WDS TRANSPARENT AUTHORIZATION SETTINGS
+//
+// ENABLE_WDS_TRANSAUTH_RESTRICTED_CUSTOMERS:
+//     When ENABLE_WDS_TRANSAUTH_RESTRICTED_CUSTOMERS is set to true, WDS Transparent
+// Authorization will be limited to a per-customer basis. The allowed customers can be 
+// configured in $gWdsTransAuthAllowedIds.
+//
+// $gWdsTransAuthAllowedIds:
+//     $gWdsTransAuthAllowedIds is an array of customer ids that are allowed to access 
+// and use WDS Transparent Authorization functionality. This array is only used when 
+// ENABLE_WDS_TRANSAUTH_RESTRICTED_CUSTOMERS is set true.
+//
+// Sample array entries:
+// $gWdsTransAuthAllowedIds = array (
+//            11111
+//          , 22222
+//          , 33333
+//		);
+// 
+// --------------------------------------------------------------------------
+
+define('ENABLE_WDS_TRANSAUTH_RESTRICTED_CUSTOMERS', false);
+
+$gWdsTransAuthAllowedIds = array();
+
+// --------------------------------------------------------------------------
+// WDS INTECEPTOR HOSTNAME
+//
+// WDS_INTERCEPTOR_HOSTNAME
+//     The hostname of the squid inteceptor box that is used for
+//     transparent authentication.
+//     This hostname is used by the SOAP call GetTransparentAuthInfo()
+//     to point the windows squid box to the right interceptor.
+//
+// Sample entry:
+// define('WDS_INTERCEPTOR_HOSTNAME', '10.1.106.62');
+// OR
+// define('WDS_INTERCEPTOR_HOSTNAME', 'p01c06p062.mxlogic.net');
+//
+// --------------------------------------------------------------------------
+define('WDS_INTERCEPTOR_HOSTNAME', "interceptor01.mxlogic.net");
+
+// --------------------------------------------------------------------------
+// WDS INTECEPTOR PREPEND CUSTOMER DOMAIN
+//
+// WDS_INTERCEPTOR_HOSTNAME_PREPEND_CUSTOMER_DOMAIN
+//     This option, if set to true, will prepend the customer's
+//     domain that was used during WDS Connector Installation.
+//     For example if the username that was supplied during
+//     installation is chirsch@mxlogic.com and
+//     WDS_INTERCEPTOR_HOSTNAME is defined as p01c06p062.mxlogic.net 
+//     then the final wds interceptor hostname will be:
+//	   mxlogic.com.p01c06p062.mxlogic.com
+//     If WDS_INTERCEPTOR_HOSTNAME_PREPEND_CUSTOMER_DOMAIN is false
+//     then the interceptor hostname will be:
+//     p01c06p062.mxlogic.com
+// --------------------------------------------------------------------------
+define('WDS_INTERCEPTOR_HOSTNAME_PREPEND_CUSTOMER_DOMAIN', true);
+
+// --------------------------------------------------------------------------
+// WDS ENABLE AUTH TIMING
+//
+// WDS_ENABLE AUTH TIMING
+//     This option, if set to true, will enable timing information in the php 
+//     error log for auth.php. 
+//     The timing information will show the elapsed wall clock time in milliseconds
+//     and will have a begin and end. 
+// --------------------------------------------------------------------------
+define('WDS_ENABLE_AUTH_TIMING', false);
+
+// --------------------------------------------------------------------------
+// MSP CONNECTOR SETTINGS
+//
+// The MSP_MONTHLY_PUSH_JOB_FAILURE_LIMIT constant sets a limit on the number of *consecutive* failures
+// for monthly push jobs for a given MSP configuration (i.e. MSP can be configured at the
+// reseller level or customer level) before the dispatch method will simply start returning
+// a failure without actually attempting to push the stats to the remote MSP server 
+// for the remainder of the life of the scheduler instance. By doing this, the jobs will be 
+// retried later (usually an hour or so). The intent of this limit is to avoid the overhead
+// associated with processing all the push jobs queued for the current hour after 
+// the limit is reached when most likely they will fail anyhow. More importantly, it 
+// limits the number of failure records that may get written to the MSP history table in the db.
+//
+// IMPORTANT NOTE! The limit is enforced on a per-scheduler instance basis meaning each
+// instance of the scheduler maintains its own failure counter.  Therefore, if multiple instances
+// of the scheduler are running concurrently, the actual number of failures that may occur
+// will equal "failure limit * number of scheduler instances". Therefore, keep that in mind 
+// when setting the limit.
+// --------------------------------------------------------------------------
+define('MSP_MONTHLY_PUSH_JOB_FAILURE_LIMIT', 3);
+
+// --------------------------------------------------------------------------
+// MESSAGE AUDIT SETTINGS
+//
+// The EDS_ENABLE_MESSAGE_AUDIT constant defines whether Message Audit is enabled
+// in the UI or not. Currently, the UI button is all this variable controls, and if
+// not set or defined, will default to "true".
+//
+// The MESSAGE_AUDIT_RETENTION_PERIOD_DAYS constant defines how many days of data
+// are available in the Message Audit database, for any user (any time zone).
+// The data needs to be stored for 1 additional day to cover all time zones.
+// This value does not include the current day.
+//
+// The MESSAGE_AUDIT_MAX_SEARCH_RESULTS constant defines the maximum number of results
+// that can be returned by the Message Audit search. This value applies to download as well.
+// Search must be constrained further in order to get less results.
+//
+// The MESSAGE_AUDIT_RECEIVED_MESSAGE_ID_MATCH constant defines a string that needs
+// to be present in the Received field of a message header when a search by header
+// is performed. The search tries to extract the message ID from a Received field
+// which contains this string.
+//
+// The MESSAGE_AUDIT_UI_TIMEOUT_SECS constant defines, in SECONDS, how long the Message
+// Audit AJAX UI will wait for a search to return before giving up. If the constant
+// is not set here, it will default to 30 seconds.
+//
+// --------------------------------------------------------------------------
+define('EDS_ENABLE_MESSAGE_AUDIT', true);
+define('MESSAGE_AUDIT_RETENTION_PERIOD_DAYS', 7);	// Message Audit retention period in days
+define('MESSAGE_AUDIT_MAX_SEARCH_RESULTS', 5000);	// Message Audit cap for search results
+define('MESSAGE_AUDIT_RECEIVED_MESSAGE_ID_MATCH', 'mxlogic.com');	// Message Audit string to match in Received header field for search by header
+define('MESSAGE_AUDIT_UI_TIMEOUT_SECS', 180);  // in seconds
+
+//@todo - Move this to wds.ini
+// --------------------------------------------------------------------------
+// WDS_IP_RANGE_STORAGE_LIMIT_DEFAULT
+//
+// The WDS_IP_RANGE_STORAGE_LIMIT_DEFAULT constant defines how many
+// IPs are allowed in the WDS IP Auth Pulldown list.
+// --------------------------------------------------------------------------
+define('WDS_IP_RANGE_STORAGE_LIMIT_DEFAULT', 100);   // Public Domain cap (default is 5)
+
+//@todo - Move this to wds.ini
+// --------------------------------------------------------------------------
+// WDS_ACCESS_CONTROLLED_SITES_STORAGE_LIMIT_DEFAULT
+//
+// The WDS_ACCESS_CONTROLLED_SITES_STORAGE_LIMIT_DEFAULT constant defines the max number of
+// entries allowed for allowed and blocked domain lists
+// --------------------------------------------------------------------------
+define('WDS_ACCESS_CONTROLLED_SITES_STORAGE_LIMIT_DEFAULT', 250);   // Public Domain cap (default is 5)
+
+// --------------------------------------------------------------------------
+// Controlled Release Settings
+//
+// These are settings intended to instantaneously activate new portal functionality.
+//
+// NEW_ARCHIVING_FUNCTIONALITY : Set to false so that the original message archiving
+//     summary and no historical mail source option when creating a new polled server
+//     is displayed. Set to true to display the new summary and enable display of the
+//     historical mail source checkbox on new polled servers.
+// --------------------------------------------------------------------------
+
+//@todo - Move this to arc.ini
+define('NEW_ARCHIVING_FUNCTIONALITY',true);
+
+?>

@@ -1,0 +1,15 @@
+function togMenu(objID) 
+{
+	if (!document.getElementById) return; 
+	var ob = document.getElementById(objID).nextSibling; 
+	ob = ob.style ? ob.style : ob.nextSibling.style; 
+	ob.display = (ob.display == 'block')?'none': 'block';
+} 
+var i = 1; 
+
+while(document.getElementById('menu'+i)) 
+{
+	document.getElementById('menu'+i).onclick= new 
+	Function("togMenu('menu"+i+"')"); 
+	i++;
+}

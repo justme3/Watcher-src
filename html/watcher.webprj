@@ -1,0 +1,53 @@
+<!DOCTYPE webproject>
+<webproject>
+  <project type="Local" name="Watcher" encoding="utf8" enableEvents="true" >
+    <upload/>
+    <defaultDTD>-//w3c//dtd html 4.01 transitional//en</defaultDTD>
+    <item url="" uploadstatus="1" />
+    <templates>templates/</templates>
+    <toolbars>toolbars/</toolbars>
+    <annotations/>
+    <item documentFolder="true" url="images/" uploadstatus="1" />
+    <item modified_time="1293140407" url="images/Watcher_in_the_Water.jpg" uploadstatus="1" />
+    <item url="templates/" uploadstatus="1" />
+    <item url="toolbars/" uploadstatus="1" />
+    <item modified_time="1367510717" url="watcher.session" uploadstatus="1" />
+    <item modified_time="1367510717" url="watcher.webprj" uploadstatus="1" />
+    <author>John Vossler</author>
+    <email>John_Vossler@McAfee.com</email>
+    <debuggerclient persistentWatches="0" persistentBreakpoints="0" >No Debugger</debuggerclient>
+    <exclude cvsignore="false" />
+    <teamdata>
+      <taskleaders/>
+      <subprojectleaders/>
+      <mailinglist address="" />
+    </teamdata>
+    <events/>
+    <item modified_time="1363973599" url="archiving.html" uploadstatus="1" />
+    <item modified_time="1303853012" url="overview-menu.html" uploadstatus="1" />
+    <item modified_time="1303853012" url="overview-main.html" uploadstatus="1" />
+    <item url="scripts/" uploadstatus="1" />
+    <item desc="" modified_time="1304546947" url="scripts/ua.js" uploadstatus="1" />
+    <item modified_time="1369859432" url="scripts/archiving-menu.js" uploadstatus="1" />
+    <item modified_time="1332449092" url="index.html" uploadstatus="1" />
+    <item modified_time="1304612530" url="scripts/ftiens4.js" uploadstatus="1" />
+    <item modified_time="1304610370" url="images/diffFolder.gif" uploadstatus="1" />
+    <item modified_time="1304610370" url="images/ftv2pnode.gif" uploadstatus="1" />
+    <item modified_time="1304610370" url="images/ftv2blank.gif" uploadstatus="1" />
+    <item modified_time="1304610370" url="images/ftv2doc.gif" uploadstatus="1" />
+    <item modified_time="1304610370" url="images/ftv2folderclosed.gif" uploadstatus="1" />
+    <item modified_time="1304610370" url="images/diffDoc.gif" uploadstatus="1" />
+    <item modified_time="1304610370" url="images/ftv2folderopen.gif" uploadstatus="1" />
+    <item modified_time="1304610370" url="images/ftv2lastnode.gif" uploadstatus="1" />
+    <item modified_time="1304610370" url="images/ftv2link.gif" uploadstatus="1" />
+    <item modified_time="1304610370" url="images/ftv2mlastnode.gif" uploadstatus="1" />
+    <item modified_time="1304610370" url="images/ftv2mnode.gif" uploadstatus="1" />
+    <item modified_time="1304610370" url="images/ftv2node.gif" uploadstatus="1" />
+    <item modified_time="1304610370" url="images/ftv2plastnode.gif" uploadstatus="1" />
+    <item modified_time="1304610370" url="images/ftv2vertline.gif" uploadstatus="1" />
+    <item modified_time="1317327574" url="scripts/index-menu.js" uploadstatus="1" />
+    <item url="php/" uploadstatus="1" />
+    <item modified_time="1332449092" url="storage.html" uploadstatus="1" />
+    <item modified_time="1332445161" url="scripts/storage-menu.js" uploadstatus="1" />
+  </project>
+</webproject>

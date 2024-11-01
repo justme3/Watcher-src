@@ -1,0 +1,7 @@
+/mxl/etc/mod_message_index.xml
+/mxl/var/httpd/conf/httpd.conf
+/mxl/var/httpd/conf/virtuals.conf
+/mxl/var/httpd/virtuals/portal/htdocs/config.ini
+/mxl/etc/mod_mc_spool.xml
+/mxl/etc/mod_quar_commit.xml
+/mxl/etc/pod_config.xml

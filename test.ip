@@ -1,0 +1,26 @@
+#!/bin/bash
+
+###set -x
+
+for DC in 106 107
+do
+	for TYPE in 150 160
+	do
+		for SEG in 1 2 3 4 5 6 7 8 9 10 18 19
+		do
+			if [[ ${TYPE} -eq 150  &&  ${SEG} -gt 8 ]]
+			then
+				MAS=1
+			else
+				(( LOCT = ${TYPE} + ${SEG} ))
+				IP="10.2.${DC}.${LOCT}"
+				echo ${IP}
+				ssh ${IP} date
+				echo ""
+			fi
+		done
+	done
+done
+
+exit 0
+

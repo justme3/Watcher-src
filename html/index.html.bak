@@ -1,0 +1,314 @@
+<html>
+	<head>
+		<SCRIPT TYPE="text/javascript">
+		<!--
+		function dropdown(mySel)
+		{
+			var myWin, myVal;
+			myVal = mySel.options[mySel.selectedIndex].value;
+			if(myVal)
+			{
+   				if(mySel.form.target)myWin = parent[mySel.form.target];
+   				else myWin = window;
+   				if (! myWin) return true;
+   				myWin.location = myVal;
+   			}
+			return false;
+		}
+		//-->
+		</SCRIPT>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<meta name="keywords" content=", ">
+		<meta name="revisit-after" content="10 Days">
+		<link href="style.css" rel="stylesheet" media="screen">
+		<title>The Watcher</title><style type="text/css">
+.style4 {
+	font-family: Arial;
+}
+.style5 {
+	font-weight: normal;
+}
+.style6 {
+	font-size: small;
+}
+.style7 {
+	color: #40724D;
+}
+.style8 {
+	font-family: Arial;
+	font-weight: normal;
+	font-size: x-small;
+	color: #336633;
+}
+.style13 {
+	font-weight: normal;
+	color: #40724D;
+	font-size: x-small;
+}
+a {
+	color: #344F2E;
+}
+a:visited {
+	color: #4F9072;
+}
+a:active {
+	color: #40724D;
+}
+a:hover {
+	color: #003300;
+}
+.style16 {
+	font-weight: normal;
+	font-size: x-small;
+}
+.style17 {
+	font-weight: normal;
+	color: #336633;
+	font-size: x-small;
+}
+.style18 {
+	font-family: Arial;
+	color: #336633;
+}
+.style19 {
+	border-width: 0;
+}
+.style20 {
+	font-family: Arial;
+	font-weight: normal;
+	font-size: small;
+}
+.style21 {
+	font-family: Arial;
+	font-weight: normal;
+	font-size: small;
+	color: #336633;
+}
+.style22 {
+	color: #40714E;
+}
+.style23 {
+	font-family: Arial;
+	font-weight: normal;
+	font-size: small;
+	color: #40714E;
+}
+.style24 {
+	font-weight: normal;
+	font-size: small;
+	color: #40714E;
+}
+.style25 {
+	color: #336633;
+}
+</style>
+
+
+	</head>
+
+	<body onLoad="" bgcolor="555555" background="" leftmargin="0" marginheight="5" marginwidth="5" topmargin="0">	
+		<div align="center">
+			<table width="100%" border="5" bgcolor="1B3550" cellspacing="0" cellpadding="0">
+				<tr>
+					<td>	
+						<div align="center">
+							<table align="" border="0" cellpadding="0" cellspacing="0" width="100%">
+    								<tbody>
+        								<tr>
+            									<td>
+											<a href="http://watcher.McAfee.com">
+											<img src="images/Title.jpg" border="2">
+											</a>
+										</td>
+        								</tr>
+    								</tbody>
+							</table>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<IFRAME align="left" name="Drill down" height="100%" width="20%" title="Scope" frameborder="1" scrolling="yes" ></IFRAME>
+
+			<table width="600" border="0" bgcolor="FFFFFF" cellspacing="0" cellpadding="0">
+				<tr height='5%'>
+					<td bgcolor = 'FFFFFF' background = "">
+						<table width="100%" border="0" cellspacing="0" cellpadding="2">
+							<tr>
+								<td>
+									<div align="center">
+										<span class="style16">
+										</span>
+										<span class="style4">
+											<font size="2" color="003300" class="style6">
+												<a href="index.html" class="style5">
+													<span class="style25">
+														[Overview]
+													</span>
+												</a>
+											</font>
+										</span>
+
+										<font size="2" class="style18">
+											<span class="style5">
+											</span>
+											<span class="style16">
+												::
+											</span>
+										</font>
+
+										<span class="style20">
+											<font color="003300">
+												<a href="archiving.html" class="style22">
+													Archiving
+												</a>
+											</font>
+										</span>
+
+										<span class="style21">
+										</span>
+
+										<font size="2" face="arial" color="003300">
+											<span class="style17">
+												::
+											</span>
+										</font>
+
+										<span class="style20">
+											<font color="003300">
+												<a href="EDS.html" class="style22">EDS</a>
+											</font>
+										</span>
+
+										<font size="2" face="arial" color="003300">
+											<span class="style17">
+												::
+											</span>
+										</font>
+
+										<span class="style20">
+											<font color="003300">
+												<a href="MC.html" class="style22">MC</a>
+											</font>
+										</span>
+
+										<span class="style21">
+										</span>
+
+										<font size="2" face="arial" color="003300">
+											<span class="style17">
+												::
+											</span>
+										</font>
+
+										<span class="style20">
+											<font color="003300">
+												<a href="other.html" class="style22">
+													AM
+												</a>
+											</font>
+										</span>
+
+										<span class="style21">
+										</span>
+
+										<font size="2" face="arial" color="003300">
+											<span class="style17">
+												::
+											</span>
+										</font>
+
+										<span class="style20">
+											<font color="003300">
+												<a href="WDS.html" class="style22">
+													WDS
+												</a>
+											</font>
+										</span>
+
+										<font size="2" face="arial" color="003300">
+											<span class="style17">
+												::
+											</span>
+										</font>
+
+										<span class="style20">
+											<font color="003300">
+												<a href="WDS.html" class="style22">
+													DB
+												</a>
+											</font>
+										</span>
+
+										<font size="2" face="arial" color="003300">
+											<span class="style17">
+												::
+											</span>
+										</font>
+
+										<span class="style20">
+											<font color="003300">
+												<a href="WDS.html" class="style22">
+													PE
+												</a>
+											</font>
+										</span>
+
+										<font size="2" face="arial" color="003300">
+											<span class="style17">
+												::
+											</span>
+										</font>
+
+										<span class="style24">
+										</span>
+
+										<span class="style20">
+											<font color="003300">
+												<a href="Storage.html" class="style22">
+													Storage 
+												</a>
+											</font>
+										</span>
+
+										<span class="style23">
+										</span>
+
+										<font size="2" face="arial" color="003300">
+										</font>
+
+									</div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+	</body>
+
+	<BODY>
+		<button type="button" value="180" name="interval" type="BUTTON">6 months </button> 
+		<button type="button" value="90"  name="interval" type="BUTTON">3 months </button>
+	</BODY>
+
+	<BODY>
+		<frameset cols="10%,30%,80" frameborder=20 title="try this">
+			<frame src="images/compatible_firefox.gif"/>
+			<frame src="images/compatible_chrome.gif"/>
+			<frame src="images/test.html"/>
+		</frameset>
+	</body>
+
+	<BODY>
+		<iframe align="right" height="100%" width="80%" frameborder="1" name="something" scrolling="yes" title="another something" marginheight="10" marginwidth="40" style="yas" >
+		</iframe>
+	</body>
+
+	<BODY>
+		<CENTER>
+			<P>Coming soon to a web browser near you</p>
+		</CENTER>
+	</body>
+</html>

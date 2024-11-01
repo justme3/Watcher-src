@@ -1,0 +1,20 @@
+#!/bin/bash
+
+###set -x
+
+for DC in 107
+do
+	for TYPE in 15 16
+	do
+		for SEG in 1 2 3 4 5 6 7 8
+		do
+			IP="10.2.${DC}.${TYPE}${SEG}"
+			echo ${IP}
+			ssh ${IP} -c "sudo -c 'cat /tmp/rsa >> /root/.ssh/authorized_keys'"
+			echo ""
+		done
+	done
+done
+
+exit 0
+

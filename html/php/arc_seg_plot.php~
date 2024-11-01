@@ -1,0 +1,22 @@
+<?php
+
+	$seg = $_GET['seg'];
+	$loc = $_GET['loc'];
+	$tspan = $_GET['tspan'];
+
+	$dbconn = pg_connect("host=localhost port=5432 dbname=watcher user=postgres password=dbG0d");
+	$rs = pg_query($dbconn,
+		"create or replace function arc_seg_plot(varchar, varchar, integer) returns text as $$
+			query<<-paste("select extract(epoch from epochtime),ingest24 from ",arg2,"_arc_cid where solrlabel ~ '",arg1,"' and epochtime > now() - '",arg3," days'::interval order by epochtime asc",sep="");
+			segplot<<-pg.spi.exec(query);
+			jpeg("/var/www/html/watcher/somefile.jpg");
+			plot(segplot,type=b,xlab="date",ylab="ingest rate",main="ingest/day");
+			dev.off();
+			print("DoNe");
+		$$ language plr;");
+
+	$rs = pg_query($dbconn,
+		"select arc_seg_plot($seg, $loc, $tspan);"
+	");
+
+?>

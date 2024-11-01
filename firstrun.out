@@ -1,0 +1,1727 @@
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP JournalMailbox@mail.co.routt.co.us:143
+Argument "ERROR: Could not connect to IMAP JournalMailbox@mail.co...." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not create socket on ptmjournalmailbox@ptmexg.pleasetouchmuseum.org:995
+Argument "ERROR: Could not create socket on ptmjournalmailbox@ptme..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP JournalMailbox@mail.burnettco.com:143
+Argument "ERROR: Could not connect to IMAP JournalMailbox@mail.bur..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Use of uninitialized value in concatenation (.) or string at /usr/local/bin/opsadmin/arc_check_ms.pl line 111.
+Argument "" isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP x2010journal@gwforum.com@mobilemail.la-lakers.com:143
+Argument "ERROR: Could not connect to IMAP x2010journal@gwforum.co..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Solr query failure:
+	Not Found (404)
+Use of uninitialized value in scalar chomp at ./archive line 217.
+Solr query failure:
+	Not Found (404)
+Use of uninitialized value in scalar chomp at ./archive line 222.
+INSERT 0 1
+Use of uninitialized value in subtraction (-) at ./archive line 456.
+Use of uninitialized value in subtraction (-) at ./archive line 470.
+INSERT 0 1
+Warning: Could not connect to IMAP jmijournalmailbox@66.162.58.30:143
+Argument "ERROR: Could not connect to IMAP jmijournalmailbox@66.16..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP cfs2journalmailbox@67.137.78.11:143
+Argument "ERROR: Could not connect to IMAP cfs2journalmailbox@67.1..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP journalmailbox@remote.ci.sisters.or.us:143
+Argument "ERROR: Could not connect to IMAP journalmailbox@remote.c..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP journalmailbox@mail.sprinklefinancial.com:143
+Argument "ERROR: Could not connect to IMAP journalmailbox@mail.spr..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near "olio"
+LINE 1: ...291852158),2071307165,2083983659,'Michael J. Dell'olio Assoc...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Use of uninitialized value in concatenation (.) or string at /usr/local/bin/opsadmin/arc_check_ms.pl line 111.
+Argument "" isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP journal@12.40.165.145:143
+Argument "ERROR: Could not connect to IMAP journal@12.40.165.145:1..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near "s"
+LINE 1: ...estamp(1291852559),2076577354,2077963347,'Yessick's Design C...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP journaling@cpq299.easystreet.com:143
+Argument "ERROR: Could not connect to IMAP journaling@cpq299.easys..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near "s"
+LINE 1: ...9),2078345417,2078944160,'Garfield County Sheriff's Office',...
+                                                             ^
+Warning: Could not connect to IMAP archive@63.84.152.180:143
+Argument "ERROR: Could not connect to IMAP archive@63.84.152.180:1..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP journalmailbox@remote.innopharmallc.com:143
+Argument "ERROR: Could not connect to IMAP journalmailbox@remote.i..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+WARNING:  nonstandard use of escape in a string literal
+LINE 1: ...,2078946803,'Agile Group',2,'mail.agilefunds.com','GNA\journ...
+                                                             ^
+HINT:  Use the escape string syntax for escapes, e.g., E'\r\n'.
+INSERT 0 1
+WARNING:  nonstandard use of escape in a string literal
+LINE 1: ...,2082198159,'Agile Group',2,'mail.agilefunds.com','gna\histo...
+                                                             ^
+HINT:  Use the escape string syntax for escapes, e.g., E'\r\n'.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP dmajournal@173.161.7.154:143
+Argument "ERROR: Could not connect to IMAP dmajournal@173.161.7.15..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+WARNING:  nonstandard use of escape in a string literal
+LINE 1: ...MK Construction Inc',2,'mail.jmkconstruction.com','jmk\journ...
+                                                             ^
+HINT:  Use the escape string syntax for escapes, e.g., E'\r\n'.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP journal@mail.medsearchint.com:143
+Argument "ERROR: Could not connect to IMAP journal@mail.medsearchi..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Use of uninitialized value in subtraction (-) at ./archive line 456.
+Use of uninitialized value in subtraction (-) at ./archive line 470.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Use of uninitialized value in subtraction (-) at ./archive line 456.
+Use of uninitialized value in subtraction (-) at ./archive line 470.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP hayes/Sandwjournalmailbox@168.93.89.171:143
+Argument "ERROR: Could not connect to IMAP hayes/Sandwjournalmailb..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+Warning: Could not connect to IMAP journalmailbox@mail.coretech.us:143
+Argument "ERROR: Could not connect to IMAP journalmailbox@mail.cor..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP journalmailbox@69.55.200.67:143
+Argument "ERROR: Could not connect to IMAP journalmailbox@69.55.20..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+Warning: Could not connect to IMAP lfjjournalmailbox@184.80.134.50:143
+Argument "ERROR: Could not connect to IMAP lfjjournalmailbox@184.8..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+Warning: Could not connect to IMAP journalmailbox@67.38.112.85:143
+Argument "ERROR: Could not connect to IMAP journalmailbox@67.38.11..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Use of uninitialized value in concatenation (.) or string at /usr/local/bin/opsadmin/arc_check_ms.pl line 111.
+Argument "" isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near "olio"
+LINE 1: ...291855595),2084509171,2084797140,'Michael J. Dell'olio (NASC...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP journalmailbox@mail.marionmilitary.edu:143
+Argument "ERROR: Could not connect to IMAP journalmailbox@mail.mar..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP ki-journalmailbox@archive.kisales.com:143
+Argument "ERROR: Could not connect to IMAP ki-journalmailbox@archi..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP archiveencore@v002.myxt.net@txmail.myxt.net:143
+Argument "ERROR: Could not connect to IMAP archiveencore@v002.myxt..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP journalmailbox@mail.andreabunismgmt.com:143
+Argument "ERROR: Could not connect to IMAP journalmailbox@mail.and..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP cptsjournalmailbox@mail.cpvegas.com:143
+Argument "ERROR: Could not connect to IMAP cptsjournalmailbox@mail..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP jalc_journal_mailbox@mail.jazzatlincolncenter.org:143
+Argument "ERROR: Could not connect to IMAP jalc_journal_mailbox@ma..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ssh: connect to host 10.1.107.54 port 22: Connection timed out
+ssh: connect to host 10.1.107.54 port 22: Connection timed out
+INSERT 0 1
+Use of uninitialized value in subtraction (-) at ./archive line 456.
+Argument "" isn't numeric in subtraction (-) at ./archive line 456.
+Use of uninitialized value in subtraction (-) at ./archive line 470.
+Argument "" isn't numeric in subtraction (-) at ./archive line 470.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not create socket on mxlogic@mail.butlerdearden.com:993
+Argument "ERROR: Could not create socket on mxlogic@mail.butlerdea..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP Journal@webmail.jsotechnology.com:143
+Argument "ERROR: Could not connect to IMAP Journal@webmail.jsotech..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP journal@owa.ccr.net:143
+Argument "ERROR: Could not connect to IMAP journal@owa.ccr.net:143" isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Use of uninitialized value in concatenation (.) or string at /usr/local/bin/opsadmin/arc_check_ms.pl line 111.
+Argument "" isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP RosenthalJournal2@65.91.79.230:143
+Argument "ERROR: Could not connect to IMAP RosenthalJournal2@65.91..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP sambackup@schopra.com@msexch.cyberspaceindia.in:143
+Argument "ERROR: Could not connect to IMAP sambackup@schopra.com@m..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP archive@remote.badyallegal.com:143
+Argument "ERROR: Could not connect to IMAP archive@remote.badyalle..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP bctlvjournaluser@64.250.232.75:143
+Argument "ERROR: Could not connect to IMAP bctlvjournaluser@64.250..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP journalmailbox@38.115.180.199:143
+Argument "ERROR: Could not connect to IMAP journalmailbox@38.115.1..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP journal2@svrexchange.corporate.christa.com:143
+Argument "ERROR: Could not connect to IMAP journal2@svrexchange.co..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP acmejournalmailbox@24.227.201.236:143
+Argument "ERROR: Could not connect to IMAP acmejournalmailbox@24.2..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP ccijournal@216.30.167.194:143
+Argument "ERROR: Could not connect to IMAP ccijournal@216.30.167.1..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP cdoca1journalmailbox@66.91.144.69:143
+Argument "ERROR: Could not connect to IMAP cdoca1journalmailbox@66..." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Solr query failure:
+	Not Found (404)
+Use of uninitialized value in scalar chomp at ./archive line 217.
+Solr query failure:
+	Not Found (404)
+Use of uninitialized value in scalar chomp at ./archive line 222.
+INSERT 0 1
+Use of uninitialized value in subtraction (-) at ./archive line 456.
+Use of uninitialized value in subtraction (-) at ./archive line 470.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Use of uninitialized value in subtraction (-) at ./archive line 456.
+Use of uninitialized value in subtraction (-) at ./archive line 470.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Warning: Could not connect to IMAP mcafee.bgb@shop.brecke.com:143
+Argument "ERROR: Could not connect to IMAP mcafee.bgb@shop.brecke...." isn't numeric in int at ./archive line 330.
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near ","
+LINE 1: ...1.107.154','10.1.106.154',673371,673371,9,9,0,0,1,,676170,67...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Use of uninitialized value in concatenation (.) or string at ./archive line 790.
+Use of uninitialized value in concatenation (.) or string at ./archive line 790.
+ERROR:  syntax error at or near ","
+LINE 1: ...nt) values (to_timestamp(1291850742),2050519446,1,,,'City of...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near ","
+LINE 1: ...0.1.107.154','10.1.106.154',38125,38127,9,9,0,0,2,,38027,461...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near ","
+LINE 1: ...0.1.107.157','10.1.106.157',40586,40586,9,9,0,0,1,,0,0,43173...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near "olio"
+LINE 1: ...852150),2071307165,1,47925,48811,'Michael J. Dell'olio Assoc...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near ","
+LINE 1: ...0.1.107.154','10.1.106.154',13178,13179,9,9,0,0,1,,0,0,13213...
+                                                             ^
+ERROR:  syntax error at or near ","
+LINE 1: ...0.1.107.152','10.1.106.152',70508,70509,9,9,0,0,1,,6103,4503...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near "s"
+LINE 1: ...amp(1291852548),2076577354,1,90894,89341,'Yessick's Design C...
+                                                             ^
+INSERT 0 1
+ERROR:  syntax error at or near ","
+LINE 1: ...0.1.107.154','10.1.106.154',59454,59454,9,9,0,0,1,,0,59359,5...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near ","
+LINE 1: ...0.1.107.154','10.1.106.154',11287,11288,9,9,0,0,2,,8982,62,1...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near "s"
+LINE 1: ...78345417,1,247641,251419,'Garfield County Sheriff's Office',...
+                                                             ^
+INSERT 0 1
+ERROR:  syntax error at or near ","
+LINE 1: ...1.107.154','10.1.106.154',213806,213627,9,9,0,0,1,,5,1,21479...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near ","
+LINE 1: ...0.1.107.155','10.1.106.155',16601,16601,9,9,0,0,1,,63,63,166...
+                                                             ^
+ERROR:  syntax error at or near ","
+LINE 1: ...0.1.107.152','10.1.106.152',60306,58304,9,9,0,0,1,,11,11,609...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near ","
+LINE 1: ...107.156','10.1.106.156',2037646,2037646,9,9,0,0,3,,2389582,2...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near ","
+LINE 1: ...0.1.107.151','10.1.106.151',80246,80226,9,9,0,0,2,,7,2,80292...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near ","
+LINE 1: ...1.107.157','10.1.106.157',369865,369856,9,9,0,0,1,,0,0,68108...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near ","
+LINE 1: ...107.156','10.1.106.156',1102795,1103522,9,9,0,0,1,,0,0,15077...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near "olio"
+LINE 1: ...855586),2084509171,1,52371,52556,'Michael J. Dell'olio (NASC...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near ","
+LINE 1: ....107.157','10.1.106.157',82976,82933,41,153,0,0,1,,0,0,94092...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near ","
+LINE 1: ...67','10.1.107.157','10.1.106.157',29,29,9,9,0,0,1,,0,0,29,29...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near ","
+LINE 1: ...0.1.107.157','10.1.106.157',18957,18957,9,9,0,0,1,,5,5,19041...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near ","
+LINE 1: ...nt) values (to_timestamp(1291858272),2093281247,1,,,'Segment...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near ","
+LINE 1: ....107.155','10.1.106.155',27129,28752,73,201,0,4,1,,6316,3565...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  syntax error at or near ","
+LINE 1: ....107.155','10.1.106.155',54047,54383,57,193,0,2,1,,0,0,55321...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+Use of uninitialized value in concatenation (.) or string at ./archive line 790.
+Use of uninitialized value in concatenation (.) or string at ./archive line 790.
+ERROR:  syntax error at or near ","
+LINE 1: ...nt) values (to_timestamp(1291862296),2107875384,1,,,'PFI - P...
+                                                             ^
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+ERROR:  INSERT has more target columns than expressions
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
